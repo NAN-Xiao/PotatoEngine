@@ -4,8 +4,11 @@ import "container/list"
 
 //ClientMgr
 type ClientMgr struct {
+	_init    bool
 	_clients list.List
 }
+
+var inst *ClientMgr
 
 func (mgr *ClientMgr) Initialize() {
 	//mgr._clients := list.New()
@@ -30,4 +33,13 @@ func (mgr *ClientMgr) RemoveCLient(cl *Client) {
 			mgr._clients.Remove(v)
 		}
 	}
+}
+func GetClientMgr() *ClientMgr {
+	if inst._init == false {
+		inst = &ClientMgr{
+			_init:    true,
+			_clients: *list.New(),
+		}
+	}
+	return inst
 }
