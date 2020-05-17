@@ -1,9 +1,9 @@
 package client
 
-
+import "potatoengine/src/connection"
 
 type Client struct {
-	//connection
+	_conn connection.Connnetion
 }
 
 

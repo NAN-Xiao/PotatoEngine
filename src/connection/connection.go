@@ -2,7 +2,7 @@ package connection
 
 import "net"
 
-type Connnet struct {
+type Connnetion struct {
 	_conn net.TCPConn
 }
 
