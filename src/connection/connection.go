@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+	"potatoengine/src/client"
 )
 
 type Connnetion struct {
@@ -13,8 +14,12 @@ type Connnetion struct {
 	_len      uint32
 }
 
-func Write() {
-
+func (conn *Connnetion) Write(data []byte) {
+	if conn._closed{
+		fmt.Printf("client connect is closed")
+		return
+	}
+	conn._tcp_conn.Write(data)
 }
 
 func (conn *Connnetion) Read() {

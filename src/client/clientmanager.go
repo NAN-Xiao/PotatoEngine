@@ -1,6 +1,8 @@
 package client
 
-import "container/list"
+import (
+	"container/list"
+)
 
 //ClientMgr
 type ClientMgr struct {
@@ -24,7 +26,6 @@ func (mgr *ClientMgr) AddClient(cl *Client) {
 	}
 	mgr._clients.PushBack(cl)
 }
-
 //删除持有的客户端
 func (mgr *ClientMgr) RemoveCLient(cl *Client) {
 
@@ -42,4 +43,12 @@ func GetClientMgr() *ClientMgr {
 		}
 	}
 	return inst
+}
+
+func  (mgr *ClientMgr)BroadcastMessage()  {
+
+	for item := mgr._clients.Front();nil != item ;item = item.Next() {
+		cl:=Client(item.Value)
+
+	}
 }
