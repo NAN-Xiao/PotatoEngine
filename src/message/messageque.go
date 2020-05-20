@@ -1,11 +1,11 @@
 package message
 
 type MessageQue struct {
-	_que []*messsage
+	_que []*Messsage
 }
 
 //返回顶部msg并从队列移除
-func (queue *MessageQue) Pop() *messsage {
+func (queue *MessageQue) Pop() *Messsage {
 	if len(queue._que) <= 0 {
 		return nil
 	}
@@ -15,7 +15,7 @@ func (queue *MessageQue) Pop() *messsage {
 }
 
 //消息放入队列后面
-func (queue *MessageQue) PushBack(msg *messsage) {
+func (queue *MessageQue) PushBack(msg *Messsage) {
 	if msg == nil {
 		return
 	}

@@ -25,17 +25,6 @@ func (conn *Connnetion) SendMessage(msg *message.Messsage) {
 	conn._msg_que.PushBack(msg)
 }
 
-//向客户端发送消息
-func (conn *Connnetion) Write(data []byte) {
-	if conn._closed {
-		fmt.Printf("client connect is closed")
-		return
-	}
-	if data != nil {
-		conn._tcp_conn.Write(data)
-	}
-}
-
 //从客户端接消息
 func (conn *Connnetion) Read() {
 	for {
@@ -61,7 +50,18 @@ func (conn *Connnetion) Read() {
 	}
 }
 
-//解析数据
+//向客户端发送消息
+func (conn *Connnetion) Write(data []byte) {
+	if conn._closed {
+		fmt.Printf("client connect is closed")
+		return
+	}
+	if data != nil {
+		conn._tcp_conn.Write(data)
+	}
+}
+
+//解析登陆数据
 func ParsingLoginData(data []byte) error {
 	id := data[0:3]
 	msgid := binary.BigEndian.Uint32(id)
