@@ -2,12 +2,14 @@ package client
 
 import (
 	"container/list"
+	"encoding/gob"
 )
 
 //ClientMgr
 type ClientMgr struct {
 	_init    bool
 	_clients list.List
+
 }
 
 var inst *ClientMgr
@@ -49,6 +51,7 @@ func (mgr *ClientMgr) RemoveCLient(cl *Client) {
 		}
 	}
 }
+
 func GetClientMgr() *ClientMgr {
 	if inst._init == false {
 		inst = &ClientMgr{

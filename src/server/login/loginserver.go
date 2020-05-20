@@ -4,11 +4,20 @@ import (
 	"fmt"
 	"net"
 	"potatoengine/src/client"
+	"potatoengine/src/router"
 	"potatoengine/src/server"
 )
 
 type LoginServer struct {
 	server.IServer
+	logrouter *router.IRouter
+}
+
+func (ls *LoginServer) RegisterLoginRouter(rt *router.IRouter) {
+	if rt == nill {
+		return
+	}
+	ls.logrouter = rt
 }
 
 func (ls *LoginServer) Initialize() {
@@ -29,20 +38,28 @@ func (ls *LoginServer) Begin() {
 		return
 	}
 	defer lisenter.Close()
-	for {
-		tcpConn, err := lisenter.AcceptTCP() //阻塞，当有客户端连接时，才会运行下面
-		if err != nil {
-			fmt.Println("tcpListener error :", err)
-			continue
+
+	go func() {
+		for {
+			tcpConn, err := lisenter.AcceptTCP() //阻塞，当有客户端连接时，才会运行下面
+			if err != nil {
+				fmt.Println("tcpListener error :", err)
+				continue
+			}
+			cl := client.NewClient(tcpConn)
+			client.GetClientMgr().AddClient(cl)
+			go client.GetClientMgr().
 		}
-		cl := client.NewClient(tcpConn)
-		client.GetClientMgr().AddClient(cl)
-	}
+	}()
+
 
 }
 
 func (ls *LoginServer) Start() {
 	ls.Begin()
+	select {
+
+	}
 }
 func (ls *LoginServer) Stop() {
 
