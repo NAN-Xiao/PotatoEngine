@@ -4,24 +4,39 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
-	"potatoengine/src/client"
+	"potatoengine/src/message"
 )
 
 type Connnetion struct {
-	_tcp_conn net.TCPConn
+	_tcp_conn *net.TCPConn
+	_msg_que  *message.MessageQue
 	_buf      []byte
 	_closed   bool
 	_len      uint32
 }
 
+//send消息外部接口。放到队列通过write发送客户端
+func (conn *Connnetion) SendMessage(msg *message.Messsage) {
+
+	if conn._msg_que == nil || msg == nil {
+		fmt.Println("connection s msgque is nil")
+		return
+	}
+	conn._msg_que.PushBack(msg)
+}
+
+//向客户端发送消息
 func (conn *Connnetion) Write(data []byte) {
-	if conn._closed{
+	if conn._closed {
 		fmt.Printf("client connect is closed")
 		return
 	}
-	conn._tcp_conn.Write(data)
+	if data != nil {
+		conn._tcp_conn.Write(data)
+	}
 }
 
+//从客户端接消息
 func (conn *Connnetion) Read() {
 	for {
 		len, err := conn._tcp_conn.Read(conn._buf)
@@ -33,8 +48,8 @@ func (conn *Connnetion) Read() {
 		if uint32(len) < head {
 			continue
 		}
-		stream := conn._buf[3 : head-1]
 		//todo
+		//stream := conn._buf[3 : head-1]
 		//解析登陆消息
 		//账号
 		//密码
@@ -57,11 +72,8 @@ func ParsingLoginData(data []byte) error {
 	case 2:
 		//其他消息
 		fmt.Println("other message")
-	default:
-		return fmt.Errorf("message is not a loging msg")
-		//错误消息
 	}
-	return nil
+	return fmt.Errorf("message is not a loging msg")
 }
 
 //关闭连接
@@ -75,9 +87,11 @@ func (conn *Connnetion) CloseConnection() bool {
 	return conn._closed
 }
 
+//新建一个连/保持tcpconn
 func NewConnection(tcpconn *net.TCPConn) *Connnetion {
 	con := &Connnetion{
-		_tcp_conn: *tcpconn,
+		_tcp_conn: tcpconn,
+		_msg_que:  message.NewMessageQueue(10),
 		_buf:      make([]byte, 2048),
 		_closed:   false,
 		_len:      4,

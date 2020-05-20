@@ -4,22 +4,26 @@ type MessageQue struct {
 	_que []*messsage
 }
 
+//返回顶部msg并从队列移除
 func (queue *MessageQue) Pop() *messsage {
 	if len(queue._que) <= 0 {
 		return nil
 	}
 	msg := queue._que[0]
+	queue._que = queue._que[1:]
 	return msg
 }
 
+//消息放入队列后面
 func (queue *MessageQue) PushBack(msg *messsage) {
-	if msg == nil || queue._que == nil {
+	if msg == nil {
 		return
 	}
 	queue._que = append(queue._que, msg)
 }
 
-func NewMessageQueue() *MessageQue {
-	que := &MessageQue{_que: nil}
+//创建一个新的消息队列，参数是新的消息数组长度
+func NewMessageQueue(len uint32) *MessageQue {
+	que := &MessageQue{_que: make([]*Messsage, len)}
 	return que
 }

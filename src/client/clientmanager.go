@@ -16,6 +16,19 @@ func (mgr *ClientMgr) Initialize() {
 	//mgr._clients := list.New()
 }
 
+//取出底部元素 先入先出
+func (mgr *ClientMgr) Pop() *Client {
+	if mgr._init == false {
+		return nil
+	}
+	item := mgr._clients.Front()
+	if item == nil {
+		return nil
+	}
+	client := item.Value.(*Client)
+	return client
+}
+
 //当有连接。添加持有的客户端
 func (mgr *ClientMgr) AddClient(cl *Client) {
 
@@ -26,6 +39,7 @@ func (mgr *ClientMgr) AddClient(cl *Client) {
 	}
 	mgr._clients.PushBack(cl)
 }
+
 //删除持有的客户端
 func (mgr *ClientMgr) RemoveCLient(cl *Client) {
 
@@ -45,10 +59,9 @@ func GetClientMgr() *ClientMgr {
 	return inst
 }
 
-func  (mgr *ClientMgr)BroadcastMessage()  {
+func (mgr *ClientMgr) BroadcastMessage() {
 
-	for item := mgr._clients.Front();nil != item ;item = item.Next() {
-		cl:=Client(item.Value)
-
+	for item := mgr._clients.Front(); nil != item; item = item.Next() {
+		cl := Client(item.Value)
 	}
 }

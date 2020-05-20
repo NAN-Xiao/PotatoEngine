@@ -14,6 +14,8 @@ type LoginServer struct {
 func (ls *LoginServer) Initialize() {
 
 }
+
+//内部调用
 func (ls *LoginServer) Begin() {
 
 	addr, err := net.ResolveTCPAddr("0.0.0.0", "8999")
