@@ -1,8 +1,9 @@
 package message
 
-type MsgID int
+type MsgType uint32
 
 const (
-	_Login MsgID = 1
-	_Enter MsgID = 1
+	Msg_Login  MsgType = 1001
+	Msg_Regist MsgType = 1002
+	Msg_TEnter MsgType = 1003
 )

@@ -1,20 +1,24 @@
 package message
 
 type Messsage struct {
-	_msgID uint32
-	_len   uint32
-	_body  []byte
+	_id   uint32
+	_len  uint32
+	_body []byte
 }
 
 func (msg *Messsage) GetData() *[]byte {
 	return &msg._body
 }
 
+func (msg *Messsage) GetID() uint32 {
+	return msg._id
+}
+
 func NewMessage(id uint32, data []byte) *Messsage {
 	msg := &Messsage{
-		_msgID: 0,
-		_body:  data,
+		_id:   id,
+		_body: data,
 	}
-	msg._len = 0
+	msg._len = uint32(len(data))
 	return msg
 }

@@ -4,13 +4,13 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+	"potatoengine/src/dispatcher"
 	"potatoengine/src/message"
 )
 
 type Connnetion struct {
 	_tcp_conn *net.TCPConn
 	_msg_que  *message.MessageQue
-	_buf      []byte
 	_closed   bool
 	_len      uint32
 }
@@ -26,17 +26,30 @@ func (conn *Connnetion) SendMessage(msg *message.Messsage) {
 }
 
 //从客户端接消息
-func (conn *Connnetion) Read() {
+func (conn *Connnetion) Read() bool {
+	tempbuff := make([]byte, 0)
+	buff := make([]byte, 2048)
 	for {
-		len, err := conn._tcp_conn.Read(conn._buf)
-		if uint32(len) < conn._len || err != nil {
+		rlen, err := conn._tcp_conn.Read(buff)
+		if err != nil {
+			break
+		}
+		tempbuff := append(tempbuff, buff[0:rlen]...)
+		if len(tempbuff) < 8 {
 			continue
 		}
-		stream := conn._buf[0:3]
-		var head = binary.BigEndian.Uint32(stream)
-		if uint32(len) < head {
+		l := tempbuff[4:7]
+		slen := binary.BigEndian.Uint32(l)
+		if len(tempbuff) < int(slen)+8 {
 			continue
 		}
+		id := binary.BigEndian.Uint32(tempbuff[0:3])
+		data := tempbuff[8:slen]
+		msg := message.NewMessage(id, data)
+
+		//重置tempbuff
+		dispatcher.DisposMessage(msg)
+		tempbuff = make([]byte, 0)
 		//todo
 		//stream := conn._buf[3 : head-1]
 		//解析登陆消息
@@ -48,17 +61,19 @@ func (conn *Connnetion) Read() {
 		//push账号下角色信息
 		//var message=ParsingLoginData(stream)
 	}
+	fmt.Println("conent is break")
+	return false
 }
 
 //向客户端发送消息
-func (conn *Connnetion) Write(data []byte) {
+func (conn *Connnetion) Write(messsage *message.Messsage) {
 	if conn._closed {
 		fmt.Printf("client connect is closed")
 		return
 	}
-	if data != nil {
-		conn._tcp_conn.Write(data)
-	}
+	//if data != nil {
+	//	conn._tcp_conn.Write(data)
+	//}
 }
 
 //解析登陆数据
@@ -92,9 +107,9 @@ func NewConnection(tcpconn *net.TCPConn) *Connnetion {
 	con := &Connnetion{
 		_tcp_conn: tcpconn,
 		_msg_que:  message.NewMessageQueue(10),
-		_buf:      make([]byte, 2048),
-		_closed:   false,
-		_len:      4,
+		//_buf:      make([]byte, 2048),
+		_closed: false,
+		_len:    4,
 	}
 	return con
 }

@@ -2,17 +2,16 @@ package client
 
 import (
 	"container/list"
-	"encoding/gob"
+	"fmt"
 )
 
 //ClientMgr
 type ClientMgr struct {
 	_init    bool
 	_clients list.List
-
 }
 
-var inst *ClientMgr
+var instance *ClientMgr
 
 func (mgr *ClientMgr) Initialize() {
 	//mgr._clients := list.New()
@@ -40,6 +39,7 @@ func (mgr *ClientMgr) AddClient(cl *Client) {
 		}
 	}
 	mgr._clients.PushBack(cl)
+	fmt.Println("a client connected")
 }
 
 //删除持有的客户端
@@ -53,18 +53,18 @@ func (mgr *ClientMgr) RemoveCLient(cl *Client) {
 }
 
 func GetClientMgr() *ClientMgr {
-	if inst._init == false {
-		inst = &ClientMgr{
+	if instance == nil || instance._init == false {
+		instance = &ClientMgr{
 			_init:    true,
 			_clients: *list.New(),
 		}
 	}
-	return inst
+	return instance
 }
 
 func (mgr *ClientMgr) BroadcastMessage() {
 
-	for item := mgr._clients.Front(); nil != item; item = item.Next() {
-		cl := Client(item.Value)
-	}
+	//for item := mgr._clients.Front(); nil != item; item = item.Next() {
+	//	cl := Client(item.Value)
+	//}
 }
