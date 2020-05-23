@@ -13,6 +13,7 @@ func main() {
 
 		return
 	}
+
 	conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
 		fmt.Printf("conn is err:%v\n", err)
@@ -20,7 +21,7 @@ func main() {
 	}
 	go func() {
 		for {
-			//fmt.Println("connect to server")
+
 			conn.Write([]byte("hello"))
 		}
 	}()

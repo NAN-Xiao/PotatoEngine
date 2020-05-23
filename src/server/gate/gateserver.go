@@ -5,7 +5,6 @@ import (
 	"net"
 	"potatoengine/src/client"
 	"potatoengine/src/router"
-	"potatoengine/src/server"
 )
 
 type GateServer struct {
@@ -51,6 +50,7 @@ func (this *GateServer) Begin() {
 			//go client.GetClientMgr().
 		}
 	}()
+	fmt.Println("GaterServer Started")
 }
 
 func (this *GateServer) Start() {
@@ -60,7 +60,7 @@ func (this *GateServer) Stop() {
 
 }
 
-func NewGateServer() *server.IServer {
+func NewGateServer() *GateServer {
 	ser := &GateServer{logrouter: nil}
 	return ser
 }

@@ -7,3 +7,9 @@ const (
 	Msg_Regist MsgType = 1002
 	Msg_TEnter MsgType = 1003
 )
+
+var MsgHandle = map[int]string{
+	1001: "Login",
+	1002: "Regist",
+	1003: "Enter",
+}

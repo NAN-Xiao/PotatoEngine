@@ -11,10 +11,6 @@ type Client struct {
 	_conn *connection.Connnetion
 }
 
-func OnConnection()  {
-}
-
-
 func (cl *Client) Send(msg *message.Messsage) {
 	if msg == nil {
 		return
@@ -22,8 +18,8 @@ func (cl *Client) Send(msg *message.Messsage) {
 	cl._conn.Write(msg)
 }
 
-func (cl *Client) Receive() {
-
+func (cl *Client) OnConnection() {
+	go cl._conn.Read()
 }
 
 func NewClient(conn *net.TCPConn) *Client {

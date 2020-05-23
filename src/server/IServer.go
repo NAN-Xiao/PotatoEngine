@@ -1,9 +1,11 @@
 package server
 
-import "potatoengine/src/router"
+import (
+	"potatoengine/src/space"
+)
 
 type IServer interface {
-	RegisterLoginRouter(rt *router.IRouter)
+	RegisterSpace(sp *space.BaseSpace)
 	Initialize()
 	Begin()
 	Stop()

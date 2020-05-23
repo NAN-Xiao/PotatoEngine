@@ -1,11 +1,9 @@
 package server
 
 import (
+	"potatoengine/src/server/gate"
 	"potatoengine/src/server/login"
 )
-
-type Server struct {
-}
 
 var _gateServer IServer
 var _loginServer IServer
@@ -16,7 +14,7 @@ func NewServer(serType string) IServer {
 	case "Login":
 		sr = login.NewLoginServer()
 	case "Gate":
-		sr = login.NewLoginServer()
+		sr = gate.NewGateServer()
 	}
 	if sr != nil {
 		return *sr
@@ -24,13 +22,13 @@ func NewServer(serType string) IServer {
 	return nil
 }
 
-func Serv() {
-	_gateServer = NewServer("Gate")
-	_loginServer = NewServer("Login")
-	Initialize()
-}
-
-func Initialize() {
-	_gateServer.Initialize()
-	_loginServer.Initialize()
-}
+//func Serv() {
+//	_gateServer = NewServer("Gate")
+//	_loginServer = NewServer("Login")
+//	Initialize()
+//}
+//
+//func Initialize() {
+//	_gateServer.Initialize()
+//	_loginServer.Initialize()
+//}

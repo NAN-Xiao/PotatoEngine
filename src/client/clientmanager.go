@@ -39,6 +39,7 @@ func (mgr *ClientMgr) AddClient(cl *Client) {
 		}
 	}
 	mgr._clients.PushBack(cl)
+	cl.OnConnection()
 	fmt.Println("a client connected")
 }
 

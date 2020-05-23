@@ -13,6 +13,8 @@ type Connnetion struct {
 	_msg_que  *message.MessageQue
 	_closed   bool
 	_len      uint32
+	_wc       chan message.Messsage
+	_rc       chan message.Messsage
 }
 
 //send消息外部接口。放到队列通过write发送客户端
@@ -25,16 +27,15 @@ func (conn *Connnetion) SendMessage(msg *message.Messsage) {
 	conn._msg_que.PushBack(msg)
 }
 
-//从客户端接消息
-func (conn *Connnetion) Read() bool {
+func (conn *Connnetion) Listen() {
 	tempbuff := make([]byte, 0)
-	buff := make([]byte, 2048)
+	nbuff := make([]byte, 2048)
 	for {
-		rlen, err := conn._tcp_conn.Read(buff)
+		rlen, err := conn._tcp_conn.Read(nbuff)
 		if err != nil {
 			break
 		}
-		tempbuff := append(tempbuff, buff[0:rlen]...)
+		tempbuff := append(tempbuff, nbuff[0:rlen]...)
 		if len(tempbuff) < 8 {
 			continue
 		}
@@ -50,17 +51,55 @@ func (conn *Connnetion) Read() bool {
 		//重置tempbuff
 		dispatcher.DisposMessage(msg)
 		tempbuff = make([]byte, 0)
-		//todo
-		//stream := conn._buf[3 : head-1]
-		//解析登陆消息
-		//账号
-		//密码
-		//查询数据库
-		//返回登陆结果
-		//push账号信息
-		//push账号下角色信息
-		//var message=ParsingLoginData(stream)
 	}
+
+}
+
+//从客户端接消息
+func (conn *Connnetion) Read() bool {
+	//tempbuff := make([]byte, 0)
+	//buff := make([]byte, 2048)
+	//for {
+	//	rlen, err := conn._tcp_conn.Read(buff)
+	//	if err != nil {
+	//		break
+	//	}
+	//	tempbuff := append(tempbuff, buff[0:rlen]...)
+	//	if len(tempbuff) < 8 {
+	//		continue
+	//	}
+	//	l := tempbuff[4:7]
+	//	slen := binary.BigEndian.Uint32(l)
+	//	if len(tempbuff) < int(slen)+8 {
+	//		continue
+	//	}
+	//	id := binary.BigEndian.Uint32(tempbuff[0:3])
+	//	data := tempbuff[8:slen]
+	//	msg := message.NewMessage(id, data)
+	//
+	//	//重置tempbuff
+	//	dispatcher.DisposMessage(msg)
+	//	tempbuff = make([]byte, 0)
+	//	//todo
+	//	//stream := conn._buf[3 : head-1]
+	//	//解析登陆消息
+	//	//账号
+	//	//密码
+	//	//查询数据库
+	//	//返回登陆结果
+	//	//push账号信息
+	//	//push账号下角色信息
+	//	//var message=ParsingLoginData(stream)
+	//}
+	for {
+		buf := make([]byte, 1024)
+		len, err := conn._tcp_conn.Read(buf)
+		if err != nil {
+			continue
+		}
+		fmt.Printf("%s",buf[0:len])
+	}
+
 	fmt.Println("conent is break")
 	return false
 }
@@ -77,19 +116,19 @@ func (conn *Connnetion) Write(messsage *message.Messsage) {
 }
 
 //解析登陆数据
-func ParsingLoginData(data []byte) error {
-	id := data[0:3]
-	msgid := binary.BigEndian.Uint32(id)
-	switch msgid {
-	case 1:
-		///登陆消息
-		fmt.Println("login message")
-	case 2:
-		//其他消息
-		fmt.Println("other message")
-	}
-	return fmt.Errorf("message is not a loging msg")
-}
+//func ParsingLoginData(data []byte) error {
+//	id := data[0:3]
+//	msgid := binary.BigEndian.Uint32(id)
+//	switch msgid {
+//	case 1:
+//		///登陆消息
+//		fmt.Println("login message")
+//	case 2:
+//		//其他消息
+//		fmt.Println("other message")
+//	}
+//	return fmt.Errorf("message is not a loging msg")
+//}
 
 //关闭连接
 //tcp conn close()

@@ -2,9 +2,6 @@ package dispatcher
 
 import "potatoengine/src/message"
 
-type Dispatcher struct {
-}
-
 func DisposMessage(msg *message.Messsage) {
 	if msg == nil {
 		return
@@ -22,6 +19,5 @@ func DisposMessage(msg *message.Messsage) {
 		//todo
 		//成功进入游戏 发送角色信息
 		return
-
 	}
 }

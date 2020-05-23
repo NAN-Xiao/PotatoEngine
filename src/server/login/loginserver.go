@@ -4,18 +4,19 @@ import (
 	"net"
 	"potatoengine/src/router"
 	"potatoengine/src/server"
+	"potatoengine/src/space"
 )
 
 type LoginServer struct {
 	_listener *net.TCPListener
-	logrouter *router.IRouter
+	_space    map[string]*space.BaseSpace
 }
 
-func (this *LoginServer) RegisterLoginRouter(rt *router.IRouter) {
-	if rt == nil {
+func (this *LoginServer) RegisterSpace(sp *space.BaseSpace) {
+	if sp == nil {
 		return
 	}
-	this.logrouter = rt
+
 }
 
 func (this *LoginServer) Initialize() {
@@ -34,7 +35,9 @@ func (this *LoginServer) Stop() {
 
 }
 
-func NewLoginServer() *server.IServer {
-	ser := &LoginServer{logrouter: nil}
+func NewLoginServer() *LoginServer {
+	ser := &LoginServer{
+		_space: make(map[string]*space.BaseSpace),
+	}
 	return ser
 }
