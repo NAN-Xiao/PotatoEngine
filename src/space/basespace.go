@@ -8,4 +8,9 @@ func (this *BaseSpace) Process() {
 
 }
 
-func NewSpace(name string) *BaseSpace {}
+func (this *BaseSpace)GetName() string  {
+
+}
+func NewSpace(name string) *BaseSpace {
+
+}

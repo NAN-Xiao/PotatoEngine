@@ -10,10 +10,10 @@ func (this *LoginSpace) Process() {
 
 }
 func (this *LoginSpace) GetName() string {
-	//return this._base._name
+	//base :=&this._base
 }
 
-func NewSpace(name string) *LoginSpace {
+func NewLoginSpace(name string) *LoginSpace {
 	sp := &LoginSpace{struct{ _name string }{_name: name}}
 	return sp
 }

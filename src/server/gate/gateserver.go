@@ -5,18 +5,25 @@ import (
 	"net"
 	"potatoengine/src/client"
 	"potatoengine/src/router"
+	"potatoengine/src/space"
 )
 
 type GateServer struct {
 	_listener *net.TCPListener
-	logrouter *router.IRouter
+	_spaces   map[string]*space.ISpace
 }
 
-func (this *GateServer) RegisterLoginRouter(rt *router.IRouter) {
-	if rt == nil {
+//为当前服务注册space
+func (this *GateServer) RegisterSpace(sp *space.ISpace) {
+	if sp == nil {
 		return
 	}
-	this.logrouter = rt
+	name := sp.GetName()
+	_, ok := this._spaces[name]
+	if ok == false {
+		fmt.Println("")
+	}
+	this._spaces[name] = sp
 }
 
 func (this *GateServer) Initialize() {
@@ -61,6 +68,9 @@ func (this *GateServer) Stop() {
 }
 
 func NewGateServer() *GateServer {
-	ser := &GateServer{logrouter: nil}
+	ser := &GateServer{
+		_listener: nil,
+		_spaces:   make(map[string]*space.ISpace),
+	}
 	return ser
 }

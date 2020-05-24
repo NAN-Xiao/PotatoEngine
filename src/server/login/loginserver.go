@@ -2,8 +2,7 @@ package login
 
 import (
 	"net"
-	"potatoengine/src/router"
-	"potatoengine/src/server"
+	//"potatoengine/src/server"
 	"potatoengine/src/space"
 )
 
