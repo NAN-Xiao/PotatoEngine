@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net"
 	"potatoengine/src/client"
-	"potatoengine/src/router"
 	"potatoengine/src/space"
 )
 
 type GateServer struct {
 	_listener *net.TCPListener
-	_spaces   map[string]*space.ISpace
+	_spaces   map[string]space.ISpace
 }
 
 //为当前服务注册space
-func (this *GateServer) RegisterSpace(sp *space.ISpace) {
+func (this *GateServer) RegisterSpace(sp space.ISpace) {
 	if sp == nil {
 		return
 	}
@@ -43,6 +42,14 @@ func (this *GateServer) Begin() {
 		fmt.Println("listener err")
 		return
 	}
+	for sp := range this._spaces {
+		go func() {
+			for{
+				this._spaces[sp].Process()
+			}
+		}()
+
+	}
 	//defer lisenter.Close()
 	go func() {
 		for {
@@ -70,7 +77,7 @@ func (this *GateServer) Stop() {
 func NewGateServer() *GateServer {
 	ser := &GateServer{
 		_listener: nil,
-		_spaces:   make(map[string]*space.ISpace),
+		_spaces:   make(map[string] space.ISpace),
 	}
 	return ser
 }

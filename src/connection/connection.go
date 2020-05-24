@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
-	"potatoengine/src/dispatcher"
 	"potatoengine/src/message"
 )
 
@@ -44,12 +43,12 @@ func (conn *Connnetion) Listen() {
 		if len(tempbuff) < int(slen)+8 {
 			continue
 		}
-		id := binary.BigEndian.Uint32(tempbuff[0:3])
-		data := tempbuff[8:slen]
-		msg := message.NewMessage(id, data)
+		//id := binary.BigEndian.Uint32(tempbuff[0:3])
+		//data := tempbuff[8:slen]
+		//msg := message.NewMessage(id, data)
 
 		//重置tempbuff
-		dispatcher.DisposMessage(msg)
+		//dispatcher.DisposMessage(msg)
 		tempbuff = make([]byte, 0)
 	}
 

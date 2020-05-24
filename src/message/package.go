@@ -14,12 +14,13 @@ func NewPack(pk []byte) *Package {
 	return pack
 }
 func Pack(msg Messsage) *Package {
-	data := msg.GetData()
-	len := Int32ToBytes(uint32(len(data) + 8))
-	id := Int32ToBytes(msgID)
-	pack := append(len, id[0:]...)
-	pack = append(pack, data[0:]...)
-	return NewPack(pack)
+	//data := msg.GetData()
+	//len := Int32ToBytes(uint32(len(data) + 8))
+	//id := Int32ToBytes(msgID)
+	//pack := append(len, id[0:]...)
+	//pack = append(pack, data[0:]...)
+	//return NewPack(pack)
+	return  nil
 }
 
 func UnPack(pk *Package) *Messsage {
@@ -29,7 +30,7 @@ func UnPack(pk *Package) *Messsage {
 	//body := data[8:]
 	msg := &Messsage{
 		//_len:0
-		_id: 0,
+		//_id: 0,
 		//_pbmsg:
 	}
 	return msg

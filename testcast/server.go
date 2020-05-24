@@ -2,13 +2,13 @@ package main
 
 import (
 	"potatoengine/src/server/gate"
-	"potatoengine/src/server/login"
+	"potatoengine/src/space"
 )
 
 func main() {
 	sr:=gate.NewGateServer()
-	sp:=login.NewLoginSpace("Login")
-	sr.RegisterLoginRouter()
+	sp:=space.NewLoginSpace("LogIn")
+	sr.RegisterSpace(sp)
 	sr.Start()
 	select {}
 }
