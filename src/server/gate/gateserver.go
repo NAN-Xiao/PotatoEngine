@@ -48,7 +48,6 @@ func (this *GateServer) Begin() {
 				this._spaces[sp].Process()
 			}
 		}()
-
 	}
 	//defer lisenter.Close()
 	go func() {

@@ -3,7 +3,9 @@ package connection
 import (
 	"encoding/binary"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"net"
+	"potatoengine/src/dispatcher"
 	"potatoengine/src/message"
 )
 
@@ -56,29 +58,29 @@ func (conn *Connnetion) Listen() {
 
 //从客户端接消息
 func (conn *Connnetion) Read() bool {
-	//tempbuff := make([]byte, 0)
-	//buff := make([]byte, 2048)
-	//for {
-	//	rlen, err := conn._tcp_conn.Read(buff)
-	//	if err != nil {
-	//		break
-	//	}
-	//	tempbuff := append(tempbuff, buff[0:rlen]...)
-	//	if len(tempbuff) < 8 {
-	//		continue
-	//	}
-	//	l := tempbuff[4:7]
-	//	slen := binary.BigEndian.Uint32(l)
-	//	if len(tempbuff) < int(slen)+8 {
-	//		continue
-	//	}
-	//	id := binary.BigEndian.Uint32(tempbuff[0:3])
-	//	data := tempbuff[8:slen]
-	//	msg := message.NewMessage(id, data)
-	//
-	//	//重置tempbuff
-	//	dispatcher.DisposMessage(msg)
-	//	tempbuff = make([]byte, 0)
+	tempbuff := make([]byte, 0)
+	buff := make([]byte, 2048)
+	for {
+		rlen, err := conn._tcp_conn.Read(buff)
+		if err != nil {
+			break
+		}
+		tempbuff := append(tempbuff, buff[0:rlen]...)
+		if len(tempbuff) < 8 {
+			continue
+		}
+		l := tempbuff[4:7]
+		slen := binary.BigEndian.Uint32(l)
+		if len(tempbuff) < int(slen)+8 {
+			continue
+		}
+		id := binary.BigEndian.Uint32(tempbuff[0:3])
+		data := tempbuff[8:slen]
+		msg := message.NewMessage(id, data)
+
+		//重置tempbuff
+		dispatcher.DisposMessage(msg)
+		tempbuff = make([]byte, 0)
 	//	//todo
 	//	//stream := conn._buf[3 : head-1]
 	//	//解析登陆消息
@@ -89,7 +91,7 @@ func (conn *Connnetion) Read() bool {
 	//	//push账号信息
 	//	//push账号下角色信息
 	//	//var message=ParsingLoginData(stream)
-	//}
+	}
 	for {
 		buf := make([]byte, 1024)
 		len, err := conn._tcp_conn.Read(buf)

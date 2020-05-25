@@ -2,6 +2,7 @@ package space
 
 import (
 	"fmt"
+	"potatoengine/src/message"
 	"reflect"
 )
 
@@ -19,6 +20,12 @@ func (this *LoginSpace) GetName() string {
 }
 
 func NewLoginSpace(name string) ISpace {
-	sp := &LoginSpace{BaseSpace{_name: name}}
+	sp := &LoginSpace{
+		BaseSpace{
+			_name: name,
+			_rch:  make(map[int]chan *message.Messsage),
+			_wch:  make(map[int]chan *message.Messsage),
+		},
+	}
 	return sp
 }
