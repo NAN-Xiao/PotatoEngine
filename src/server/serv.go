@@ -3,32 +3,60 @@ package server
 import (
 	"potatoengine/src/server/gate"
 	"potatoengine/src/server/login"
+	"potatoengine/src/space"
 )
 
-var _gateServer IServer
-var _loginServer IServer
+type ServerName string
 
-func NewServer(serType string) IServer {
-	var sr *IServer
-	switch serType {
-	case "Login":
-		sr = login.NewLoginServer()
-	case "Gate":
-		sr = gate.NewGateServer()
-	}
-	if sr != nil {
-		return *sr
-	}
-	return nil
+const (
+	Loging ServerName = "LoginServer"
+	Gate   ServerName = "GateServer"
+	Game   ServerName = "GameServer"
+)
+
+var GateServer IServer
+var LoginServer IServer
+var ServerMap map[string]IServer
+
+func init() {
+	LaunchServer()
+	Initialize()
 }
 
-//func Serv() {
-//	_gateServer = NewServer("Gate")
-//	_loginServer = NewServer("Login")
-//	Initialize()
-//}
-//
-//func Initialize() {
-//	_gateServer.Initialize()
-//	_loginServer.Initialize()
-//}
+func LaunchServer() {
+	GateServer = gate.NewGateServer()
+	LoginServer = login.NewLoginServer()
+	ServerMap := make(map[string]IServer)
+	ServerMap["Loging"] = LoginServer
+	ServerMap["Gate"] = GateServer
+}
+
+//给server注册space
+func RegistSpace(name ServerName, sp space.ISpace) {
+
+	if ServerMap == nil {
+		return
+	}
+	for m := range ServerMap {
+		if m == string(name) {
+			ServerMap[m].RegisterSpace(sp)
+		}
+	}
+}
+func Initialize() {
+	if ServerMap == nil {
+
+		return
+	}
+	for m := range ServerMap {
+		ServerMap[m].Initialize()
+	}
+}
+func Serv() {
+	if ServerMap == nil {
+		return
+	}
+	for m := range ServerMap {
+		ServerMap[m].Begin()
+	}
+}

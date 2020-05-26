@@ -4,39 +4,31 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 )
-
+//客户端和服务器端通讯消息
 type Messsage struct {
 	//消息id
-	_mid uint32
-	//用户id
-	_uid uint32
-	//playerid
-	_pid   uint32
-	_body  []byte
+	_msgid MsgID
 	_pbmsg *proto.Message
 }
 
-func (msg *Messsage) GetData() []byte {
-	return msg._body
+func (msg *Messsage) GetData() *proto.Message {
+	return msg._pbmsg
 }
 
-func (msg *Messsage) GetID() uint32 {
-	return msg._mid
+func (msg *Messsage) GetID() MsgID {
+	return msg._msgid
 }
 
-func NewMessage(id int, data []byte) *Messsage {
-	if id<1000||data == nil {
+func NewMessage(id MsgID, data *proto.Message) *Messsage {
+	if id < 1000 || data == nil {
 		fmt.Println("creat new message error becase the pb msg is nill")
 		return nil
 	}
 	//todo
 	//填充message数据
-	msg:=&Messsage{
-		_mid:   0,
-		_uid:   0,
-		_pid:   0,
-		_body:  nil,
-		_pbmsg: nil,
+	msg := &Messsage{
+		_msgid: id,
+		_pbmsg: data,
 	}
 	//new一个新的PBmessage
 	//msg._len = uint32(len(data))

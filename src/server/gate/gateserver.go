@@ -4,26 +4,15 @@ import (
 	"fmt"
 	"net"
 	"potatoengine/src/client"
+	"potatoengine/src/server"
 	"potatoengine/src/space"
 )
 
 type GateServer struct {
-	_listener *net.TCPListener
-	_spaces   map[string]space.ISpace
+	server.BaseServer
 }
 
-//为当前服务注册space
-func (this *GateServer) RegisterSpace(sp space.ISpace) {
-	if sp == nil {
-		return
-	}
-	name := sp.GetName()
-	_, ok := this._spaces[name]
-	if ok == false {
-		fmt.Println("")
-	}
-	this._spaces[name] = sp
-}
+
 
 func (this *GateServer) Initialize() {
 
@@ -31,6 +20,8 @@ func (this *GateServer) Initialize() {
 
 //内部调用
 func (this *GateServer) Begin() {
+
+	this.RunSpace()
 
 	addr, err := net.ResolveTCPAddr("tcp4", "0.0.0.0:8999")
 	if err != nil {
@@ -42,13 +33,7 @@ func (this *GateServer) Begin() {
 		fmt.Println("listener err")
 		return
 	}
-	for sp := range this._spaces {
-		go func() {
-			for{
-				this._spaces[sp].Process()
-			}
-		}()
-	}
+
 	//defer lisenter.Close()
 	go func() {
 		for {
@@ -60,23 +45,23 @@ func (this *GateServer) Begin() {
 			}
 			cl := client.NewClient(tcpConn)
 			client.GetClientMgr().AddClient(cl)
-			//go client.GetClientMgr().
 		}
 	}()
 	fmt.Println("GaterServer Started")
 }
 
-func (this *GateServer) Start() {
+func (this *GateServer) Run() {
 	this.Begin()
 }
 func (this *GateServer) Stop() {
 
 }
 
+///新建gateserver
 func NewGateServer() *GateServer {
-	ser := &GateServer{
-		_listener: nil,
-		_spaces:   make(map[string] space.ISpace),
-	}
-	return ser
+	sr := &GateServer{struct {
+		Listener *net.TCPListener
+		Spaces   map[string]space.ISpace
+	}{Listener: nil, Spaces: make(map[string]space.ISpace)}}
+	return sr
 }
