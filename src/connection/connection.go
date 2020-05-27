@@ -3,7 +3,6 @@ package connection
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/golang/protobuf/proto"
 	"net"
 	"potatoengine/src/dispatcher"
 	"potatoengine/src/message"
@@ -79,7 +78,7 @@ func (conn *Connnetion) Read() bool {
 		msg := message.NewMessage(id, data)
 
 		//重置tempbuff
-		dispatcher.DisposMessage(msg)
+		dispatcher.DispatcherMessage(msg)
 		tempbuff = make([]byte, 0)
 	//	//todo
 	//	//stream := conn._buf[3 : head-1]

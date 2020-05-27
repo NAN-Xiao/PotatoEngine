@@ -60,3 +60,9 @@ func Serv() {
 		ServerMap[m].Begin()
 	}
 }
+
+func RegistMessage() {
+	//todo
+	//注册各种消息类型
+	//message.RegisteredNetMessage("")
+}

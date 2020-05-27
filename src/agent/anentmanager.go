@@ -1,28 +1,34 @@
 package agent
 
-import "container/list"
-
 type AgentMgr struct {
 	_init   bool
-	_agents *list.List
-}
-
-//取出底部元素 先入先出
-func (mgr *AgentMgr) Pop() *Agent {
-	value := mgr._agents.Front()
-	if value == nil {
-		return nil
-	}
-	agent := value.Value.(*Agent)
-	if agent == nil {
-		return nil
-	}
-	return agent
+	_agents map[uint32]*Agent
 }
 
 //添加agent
-func (mgr *AgentMgr) AddAgent(agent *Agent) {
-	mgr._agents.PushBack(agent)
+func (this *AgentMgr) AddAgent(agent *Agent) {
+	id := agent._cid
+	_, ok := this._agents[id]
+	if ok == true {
+		return
+	}
+	this._agents[id] = agent
+}
+
+//得到注册的anent
+func (this *AgentMgr) GetAgent(cid uint32) *Agent {
+	v, ok := this._agents[cid]
+	if ok {
+		return v
+	}
+	return nil
+}
+
+func (this *AgentMgr) RemoveAgent(cid uint32) {
+	_, ok := this._agents[cid]
+	if ok {
+		delete(this._agents, cid)
+	}
 }
 
 var instance *AgentMgr
@@ -31,7 +37,7 @@ func GetAgentMgr() *AgentMgr {
 	if instance == nil {
 		instance = &AgentMgr{
 			_init:   true,
-			_agents: list.New(),
+			_agents: make(map[uint32]*Agent),
 		}
 	}
 	return instance

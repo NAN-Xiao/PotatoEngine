@@ -1,11 +1,15 @@
 package space
 
-import "potatoengine/src/message"
+import (
+	"potatoengine/src/agent"
+	"potatoengine/src/message"
+)
 
 type BaseSpace struct {
 	SpaceID    uint32
 	Spacename  string
-	Spacechanl chan message.Messsage
+	Agents     map[uint32]*agent.Agent
+	Spacechanl chan *message.MsgPackage
 }
 
 //func (this *BaseSpace) Process() {

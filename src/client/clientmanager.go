@@ -1,14 +1,14 @@
 package client
 
 import (
-	"container/list"
 	"fmt"
 )
 
 //ClientMgr
 type ClientMgr struct {
-	_init    bool
-	_clients list.List
+	_init       bool
+	_clients    map[uint32]*Client
+	_tempclient []*Client
 }
 
 var instance *ClientMgr
@@ -17,47 +17,63 @@ func (mgr *ClientMgr) Initialize() {
 	//mgr._clients := list.New()
 }
 
-//取出底部元素 先入先出
-func (mgr *ClientMgr) Pop() *Client {
-	if mgr._init == false {
-		return nil
+//根据id返回client
+func (this *ClientMgr) GetClient(cid uint32) *Client {
+	v, ok := this._clients[cid]
+	if ok {
+		return v
 	}
-	item := mgr._clients.Front()
-	if item == nil {
-		return nil
-	}
-	client := item.Value.(*Client)
-	return client
+	return nil
 }
 
 //当有连接。添加持有的客户端
-func (mgr *ClientMgr) AddClient(cl *Client) {
+func (this *ClientMgr) AddClient(cl *Client) {
 
-	for v := mgr._clients.Front(); v != nil; v = v.Next() {
-		if v.Value == cl {
+	if this._tempclient == nil {
+		return
+	}
+	for _, v := range this._tempclient {
+		if v == cl {
 			return
 		}
 	}
-	mgr._clients.PushBack(cl)
+	this._tempclient = append(this._tempclient, cl)
 	cl.OnConnection()
 	fmt.Println("a client connected")
 }
 
 //删除持有的客户端
-func (mgr *ClientMgr) RemoveCLient(cl *Client) {
-
-	for v := mgr._clients.Front(); v != nil; v = v.Next() {
-		if v.Value == cl {
-			mgr._clients.Remove(v)
+func (this *ClientMgr) RemoveCLient(cl *Client) {
+	for _, v := range this._tempclient {
+		if v == cl {
+			//todo 从数组删除
+			return
 		}
+	}
+	if this._clients == nil {
+		return
+	}
+	for k := range this._clients {
+		if this._clients[k] == cl {
+			delete(this._clients, k)
+			return
+		}
+	}
+}
+
+func (this *ClientMgr) RemoveCLientByID(cid uint32) {
+	v, o := this._clients[cid]
+	if o == true {
+		delete(this._clients, v._cid)
 	}
 }
 
 func GetClientMgr() *ClientMgr {
 	if instance == nil || instance._init == false {
 		instance = &ClientMgr{
-			_init:    true,
-			_clients: *list.New(),
+			_init:       true,
+			_clients:    make(map[uint32]*Client),
+			_tempclient: make([]*Client, 0),
 		}
 	}
 	return instance

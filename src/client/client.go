@@ -7,8 +7,8 @@ import (
 )
 
 type Client struct {
-	_cID  uint32
-	_conn *connection.Connnetion
+	_cid   uint32
+	_conn  *connection.Connnetion
 }
 
 func (cl *Client) Send(msg *message.Messsage) {
