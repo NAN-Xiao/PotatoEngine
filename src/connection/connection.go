@@ -98,11 +98,16 @@ func (conn *TcpConnnetion) WriteToNet() {
 	}
 	conn._tcp_conn.Write(pb)
 }
+
 //外部读取消息从chanel
-func (conn *TcpConnnetion) ReadFromChannel() message.Messsage {
-	msg := <-conn._rc
-	return msg
+func (conn *TcpConnnetion) ReadFromChannel() *message.Messsage {
+	msg, ok := <-conn._rc
+	if ok == true {
+		return &msg
+	}
+	return nil
 }
+
 //外部调用发送消息先放到chanel
 func (conn *TcpConnnetion) WriteToChannel(msg message.Messsage) {
 	conn._wc <- msg

@@ -28,7 +28,7 @@ func (cl *Client) OnConnection() {
 			cl._conn.WriteToNet()
 			msg := cl._conn.ReadFromChannel()
 			if &msg != nil {
-				dispatcher.DispatcherMessage(cl.UserID, cl.PlayerID, &msg)
+				dispatcher.DispatcherMessage(cl.UserID, cl.PlayerID, msg)
 			}
 		}
 	}()
