@@ -16,6 +16,7 @@ type Connnetion struct {
 	_wc       chan message.Messsage
 	_rc       chan message.Messsage
 }
+
 //send消息外部接口。
 //放到队列通过write发送客户端
 func (conn *Connnetion) SendMessage(msg *message.Messsage) {
@@ -44,6 +45,7 @@ func (conn *Connnetion) Listen() {
 		if len(tempbuff) < int(slen)+8 {
 			continue
 		}
+
 		//id := binary.BigEndian.Uint32(tempbuff[0:3])
 		//data := tempbuff[8:slen]
 		//msg := message.NewMessage(id, data)
@@ -80,16 +82,16 @@ func (conn *Connnetion) Read() bool {
 		//重置tempbuff
 		dispatcher.DispatcherMessage(msg)
 		tempbuff = make([]byte, 0)
-	//	//todo
-	//	//stream := conn._buf[3 : head-1]
-	//	//解析登陆消息
-	//	//账号
-	//	//密码
-	//	//查询数据库
-	//	//返回登陆结果
-	//	//push账号信息
-	//	//push账号下角色信息
-	//	//var message=ParsingLoginData(stream)
+		//	//todo
+		//	//stream := conn._buf[3 : head-1]
+		//	//解析登陆消息
+		//	//账号
+		//	//密码
+		//	//查询数据库
+		//	//返回登陆结果
+		//	//push账号信息
+		//	//push账号下角色信息
+		//	//var message=ParsingLoginData(stream)
 	}
 	for {
 		buf := make([]byte, 1024)
@@ -97,7 +99,7 @@ func (conn *Connnetion) Read() bool {
 		if err != nil {
 			continue
 		}
-		fmt.Printf("%s",buf[0:len])
+		fmt.Printf("%s", buf[0:len])
 	}
 
 	fmt.Println("conent is break")
@@ -113,6 +115,14 @@ func (conn *Connnetion) Write(messsage *message.Messsage) {
 	//if data != nil {
 	//	conn._tcp_conn.Write(data)
 	//}
+}
+func (conn *Connnetion) ReadFromChannel() message.Messsage {
+	msg := <-conn._rc
+	return msg
+}
+func (conn *Connnetion) WriteToChannel(msg message.Messsage) {
+	//b := conn._rc- > msg
+	
 }
 
 //解析登陆数据
@@ -149,6 +159,8 @@ func NewConnection(tcpconn *net.TCPConn) *Connnetion {
 		//_buf:      make([]byte, 2048),
 		_closed: false,
 		_len:    4,
+		_wc:     make(chan message.Messsage, 200),
+		_rc:     make(chan message.Messsage, 200),
 	}
 	return con
 }
