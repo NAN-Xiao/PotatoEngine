@@ -3,12 +3,12 @@ package connection
 import (
 	"encoding/binary"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"net"
-	"potatoengine/src/dispatcher"
 	"potatoengine/src/message"
 )
 
-type Connnetion struct {
+type TcpConnnetion struct {
 	_tcp_conn *net.TCPConn
 	_msg_que  *message.MessageQue
 	_closed   bool
@@ -18,17 +18,17 @@ type Connnetion struct {
 }
 
 //send消息外部接口。
-//放到队列通过write发送客户端
-func (conn *Connnetion) SendMessage(msg *message.Messsage) {
+////放到队列通过write发送客户端
+//func (conn *TcpConnnetion) SendMessage(msg *message.Messsage) {
+//
+//	if conn._msg_que == nil || msg == nil {
+//		fmt.Println("connection s msgque is nil")
+//		return
+//	}
+//	conn._msg_que.PushBack(msg)
+//}
 
-	if conn._msg_que == nil || msg == nil {
-		fmt.Println("connection s msgque is nil")
-		return
-	}
-	conn._msg_que.PushBack(msg)
-}
-
-func (conn *Connnetion) Listen() {
+func (conn *TcpConnnetion) Listen() {
 	tempbuff := make([]byte, 0)
 	nbuff := make([]byte, 2048)
 	for {
@@ -57,12 +57,12 @@ func (conn *Connnetion) Listen() {
 
 }
 
-//从客户端接消息
-func (conn *Connnetion) Read() bool {
+//从网络客户端接消息 处理粘包后塞到chanel
+func (this *TcpConnnetion) ReadFormNet() bool {
 	tempbuff := make([]byte, 0)
 	buff := make([]byte, 2048)
 	for {
-		rlen, err := conn._tcp_conn.Read(buff)
+		rlen, err := this._tcp_conn.Read(buff)
 		if err != nil {
 			break
 		}
@@ -78,72 +78,40 @@ func (conn *Connnetion) Read() bool {
 		id := binary.BigEndian.Uint32(tempbuff[0:3])
 		data := tempbuff[8:slen]
 		msg := message.NewMessage(id, data)
-
-		//重置tempbuff
-		dispatcher.DispatcherMessage(msg)
+		this._rc <- *msg
 		tempbuff = make([]byte, 0)
-		//	//todo
-		//	//stream := conn._buf[3 : head-1]
-		//	//解析登陆消息
-		//	//账号
-		//	//密码
-		//	//查询数据库
-		//	//返回登陆结果
-		//	//push账号信息
-		//	//push账号下角色信息
-		//	//var message=ParsingLoginData(stream)
 	}
-	for {
-		buf := make([]byte, 1024)
-		len, err := conn._tcp_conn.Read(buf)
-		if err != nil {
-			continue
-		}
-		fmt.Printf("%s", buf[0:len])
-	}
-
 	fmt.Println("conent is break")
 	return false
 }
 
-//向客户端发送消息
-func (conn *Connnetion) Write(messsage *message.Messsage) {
+//读取通道并解析成消息 通过tcp向客户端发送
+func (conn *TcpConnnetion) WriteToNet() {
 	if conn._closed {
 		fmt.Printf("client connect is closed")
 		return
 	}
-	//if data != nil {
-	//	conn._tcp_conn.Write(data)
-	//}
+	data := <-conn._wc
+	pb, err := proto.Marshal((*data.GetData()))
+	if err == nil {
+		return
+	}
+	conn._tcp_conn.Write(pb)
 }
-func (conn *Connnetion) ReadFromChannel() message.Messsage {
+//外部读取消息从chanel
+func (conn *TcpConnnetion) ReadFromChannel() message.Messsage {
 	msg := <-conn._rc
 	return msg
 }
-func (conn *Connnetion) WriteToChannel(msg message.Messsage) {
-	//b := conn._rc- > msg
-	
+//外部调用发送消息先放到chanel
+func (conn *TcpConnnetion) WriteToChannel(msg message.Messsage) {
+	conn._wc <- msg
 }
-
-//解析登陆数据
-//func ParsingLoginData(data []byte) error {
-//	id := data[0:3]
-//	msgid := binary.BigEndian.Uint32(id)
-//	switch msgid {
-//	case 1:
-//		///登陆消息
-//		fmt.Println("login message")
-//	case 2:
-//		//其他消息
-//		fmt.Println("other message")
-//	}
-//	return fmt.Errorf("message is not a loging msg")
-//}
 
 //关闭连接
 //tcp conn close()
 //retun true
-func (conn *Connnetion) CloseConnection() bool {
+func (conn *TcpConnnetion) CloseConnection() bool {
 	if conn._closed == false {
 		conn._closed = true
 	}
@@ -152,8 +120,9 @@ func (conn *Connnetion) CloseConnection() bool {
 }
 
 //新建一个连/保持tcpconn
-func NewConnection(tcpconn *net.TCPConn) *Connnetion {
-	con := &Connnetion{
+//新建的时候uid pid没有确认登陆前默认是0
+func NewTcpConnection(tcpconn *net.TCPConn) *TcpConnnetion {
+	con := &TcpConnnetion{
 		_tcp_conn: tcpconn,
 		_msg_que:  message.NewMessageQueue(10),
 		//_buf:      make([]byte, 2048),

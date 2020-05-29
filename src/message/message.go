@@ -23,9 +23,12 @@ type MsgPackage struct {
 func (this *MsgPackage) GetMsgID() uint32 {
 	return this._mid
 }
+func (this *MsgPackage)GetMessage()*Messsage  {
+	return &this._msg
+}
 
 //打包成服务器间的消息模块
-func PackMessage(uid uint32, pid uint32, msg Messsage) *MsgPackage {
+func PackMessagePackage(uid uint32, pid uint32, msg Messsage) *MsgPackage {
 	pack := &MsgPackage{
 		_uid:      uid,
 		_playerID: pid,

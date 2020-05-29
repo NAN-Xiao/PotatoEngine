@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"potatoengine/src/client"
+	"potatoengine/src/message"
 	"potatoengine/src/server"
 	"potatoengine/src/space"
 )
@@ -12,8 +13,6 @@ type GateServer struct {
 	server.BaseServer
 }
 
-
-
 func (this *GateServer) Initialize() {
 
 }
@@ -21,7 +20,7 @@ func (this *GateServer) Initialize() {
 //内部调用
 func (this *GateServer) Begin() {
 
-	this.RunSpace()
+	//this.RunSpace()
 
 	addr, err := net.ResolveTCPAddr("tcp4", "0.0.0.0:8999")
 	if err != nil {
@@ -33,8 +32,6 @@ func (this *GateServer) Begin() {
 		fmt.Println("listener err")
 		return
 	}
-
-	//defer lisenter.Close()
 	go func() {
 		for {
 			//fmt.Println("listen client connect")
@@ -57,6 +54,18 @@ func (this *GateServer) Stop() {
 
 }
 
+//广播消息
+func (this *GateServer) BroadcastMessage(msg *message.MsgPackage) {
+
+	if msg == nil {
+		return
+	}
+	m := msg.GetMessage()
+	client.GetClientMgr().BroadcastMessage(m)
+}
+
+//todo
+//可以通过一个全局接口方法根据type创建不同的server
 ///新建gateserver
 func NewGateServer() *GateServer {
 	sr := &GateServer{struct {

@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"potatoengine/src/message"
 )
 
 //ClientMgr
@@ -78,10 +79,13 @@ func GetClientMgr() *ClientMgr {
 	}
 	return instance
 }
+//广播消息
+func (mgr *ClientMgr) BroadcastMessage(msg *message.Messsage) {
 
-func (mgr *ClientMgr) BroadcastMessage() {
-
-	//for item := mgr._clients.Front(); nil != item; item = item.Next() {
-	//	cl := Client(item.Value)
-	//}
+	if mgr._clients == nil {
+		return
+	}
+	for c := range mgr._clients {
+		mgr._clients[c].Send(msg)
+	}
 }

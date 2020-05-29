@@ -12,8 +12,6 @@ type LoginServer struct {
 }
 
 //为当前服务注册space
-
-
 func (this *LoginServer) Initialize() {
 
 }
@@ -36,7 +34,6 @@ func (this *LoginServer) Stop() {
 }
 
 //启动所有space的go
-
 ///新建LoginServer
 func NewLoginServer() server.IServer {
 	sr := &LoginServer{struct {
