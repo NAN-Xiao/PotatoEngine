@@ -16,8 +16,8 @@ type Connnetion struct {
 	_wc       chan message.Messsage
 	_rc       chan message.Messsage
 }
-
-//send消息外部接口。放到队列通过write发送客户端
+//send消息外部接口。
+//放到队列通过write发送客户端
 func (conn *Connnetion) SendMessage(msg *message.Messsage) {
 
 	if conn._msg_que == nil || msg == nil {
