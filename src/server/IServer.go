@@ -6,9 +6,8 @@ import (
 
 type IServer interface {
 	RegisterSpace(sp space.ISpace)
-
-	Initialize()
-	Begin()
+	//Initialize()
+	//Begin()
 	Stop()
 	Run()
 	//RunSpace()

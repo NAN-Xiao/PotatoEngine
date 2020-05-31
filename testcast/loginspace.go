@@ -2,36 +2,70 @@ package main
 
 import (
 	"fmt"
+	"github.com/golang/protobuf/proto"
+	"io/ioutil"
+	"net/http"
 	"potatoengine/src/agent"
+	"potatoengine/src/db"
 	"potatoengine/src/message"
 	"potatoengine/src/space"
 )
 
-type LoginSpace struct {
+type Handle interface {
+	//ServeHTTP(ResponseWriter, *Request)
+}
+
+type GateSpace struct {
 	space.BaseSpace
 }
 
-func (this *LoginSpace) Process() {
-	for {
-		value, ok := <-this.Spacechanl
-		if ok == false {
-			continue
-		}
-		msgid := value.GetMsgID()
-		_, have := message.NetMessageType[msgid]
-		if have == false {
-			fmt.Printf("%s space process mesg error bac not register %d msgid", this.GetName(), msgid)
-			return
-		}
+//todo http监听返回登陆结果
+func (this *GateSpace) Process() {
+	http.HandleFunc("/login", func(writer http.ResponseWriter, request *http.Request) {
 
-		//todo
-		//goroutine
-		//数据库查询客户端登陆信息函数
-	}
+		var matching = false
+		go func() {
+			buffer, err := ioutil.ReadAll(request.Body)
+			if err != nil {
+				return
+			}
+
+			er := proto.Unmarshal(buffer, nil)
+			if er != nil {
+				return
+			}
+			sql := db.GetSQLManager().GetSQL()
+			if sql == nil {
+				return
+			}
+			var username string
+			var userpassword string
+
+			rows, err := sql.Query(" SELECT * FROM user")
+			for rows.Next() {
+				var id int
+				var name string
+				var password string
+				err = rows.Scan(&id, &name, &password)
+				if username == name && password == userpassword {
+					matching = true
+					break
+				}
+				fmt.Println(id, name, password)
+			}
+
+			if matching == true {
+				writer.Write([]byte{1})
+				return
+			}
+			writer.Write([]byte{0})
+		}()
+	})
+	http.ListenAndServe("0.0.0.0:8999", nil)
 }
 
 //agent 进入场景
-func (this *LoginSpace) LeaveSpace(ag *agent.Agent) {
+func (this *GateSpace) LeaveSpace(ag *agent.Agent) {
 	v, ok := this.Agents[ag.Aid]
 	if ok {
 		v.OnLeaveSpace()
@@ -40,7 +74,7 @@ func (this *LoginSpace) LeaveSpace(ag *agent.Agent) {
 }
 
 //agent退出场景
-func (this *LoginSpace) EnterSpace(ag *agent.Agent) {
+func (this *GateSpace) EnterSpace(ag *agent.Agent) {
 	_, ok := this.Agents[ag.Aid]
 	if ok {
 		return
@@ -49,11 +83,11 @@ func (this *LoginSpace) EnterSpace(ag *agent.Agent) {
 	ag.OnLeaveSpace()
 }
 
-func (this *LoginSpace) GetName() string {
+func (this *GateSpace) GetName() string {
 	return this.Spacename
 }
 
-func NewLoginSpace(name string) space.ISpace {
+func NewGateSpace(name string) space.ISpace {
 	sp := &LoginSpace{space.BaseSpace{
 		SpaceID:    0,
 		Spacename:  name,
