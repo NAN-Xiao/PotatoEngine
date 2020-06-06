@@ -7,7 +7,7 @@ type AgentMgr struct {
 
 //添加agent
 func (this *AgentMgr) AddAgent(agent *Agent) {
-	id := agent._cid
+	id := agent.GetUserID()
 	_, ok := this._agents[id]
 	if ok == true {
 		return

@@ -1,7 +1,8 @@
-package server
+package main
 
 import (
-	"potatoengine/src/server/gate"
+	"fmt"
+	"potatoengine/src/server"
 	"potatoengine/src/server/login"
 	"potatoengine/src/space"
 )
@@ -14,27 +15,29 @@ const (
 	Game   ServerName = "GameServer"
 )
 
-var GateServer IServer
-var LoginServer IServer
-var ServerMap map[string]IServer
+var GateServer server.IServer
+var LoginServer server.IServer
+var ServerMap map[string]server.IServer
 
-func init() {
-	LaunchServer()
-	Initialize()
-}
+//func init() {
+//	LaunchServer()
+//	Initialize()
+//}
 
 func LaunchServer() {
-	GateServer = gate.NewGateServer()
+	//GateServer = gate.NewGateServer()
 	LoginServer = login.NewLoginServer()
-	ServerMap := make(map[string]IServer)
-	ServerMap["Loging"] = LoginServer
-	ServerMap["Gate"] = GateServer
+	ServerMap = make(map[string]server.IServer)
+	ServerMap["Login"] = LoginServer
+	fmt.Println("launchServer")
+	//ServerMap["Gate"] = GateServer
 }
 
 //给server注册space
 func RegistSpace(name ServerName, sp space.ISpace) {
 
 	if ServerMap == nil {
+		fmt.Printf("sermap :%s is null",name)
 		return
 	}
 	for m := range ServerMap {
@@ -44,20 +47,15 @@ func RegistSpace(name ServerName, sp space.ISpace) {
 	}
 }
 func Initialize() {
-	if ServerMap == nil {
 
-		return
-	}
-	for m := range ServerMap {
-		ServerMap[m].Initialize()
-	}
 }
 func Serv() {
 	if ServerMap == nil {
+		fmt.Println("server  map is nill")
 		return
 	}
 	for m := range ServerMap {
-		ServerMap[m].Begin()
+		ServerMap[m].Run()
 	}
 }
 

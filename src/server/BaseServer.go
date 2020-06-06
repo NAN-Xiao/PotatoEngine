@@ -12,26 +12,34 @@ type BaseServer struct {
 }
 
 func (this *BaseServer) RunSpace() bool {
-	sp := this.Spaces
-	if sp == nil {
-
+	if this.Spaces == nil || len(this.Spaces) <= 0 {
+		fmt.Printf("this server have any space ::%d \n", len(this.Spaces))
 		return false
 	}
-	for s := range sp {
-		go sp[s].Process()
+	for s := range this.Spaces {
+		sp := this.Spaces[s]
+		if sp == nil {
+			continue
+		}
+		fmt.Printf("RunSpace::getname(%s)>>\n", sp.GetName())
+		go sp.Process()
 	}
+	//fmt.Println("runspace")
 	return true
 }
 
 //为当前服务注册space
 func (this *BaseServer) RegisterSpace(sp space.ISpace) {
+
 	if sp == nil {
 		return
 	}
 	name := sp.GetName()
 	_, ok := this.Spaces[name]
-	if ok == false {
-		fmt.Println("")
+	if ok {
+		return
 	}
 	this.Spaces[name] = sp
+	fmt.Printf("SpaceAdded::%s \n", name)
+	fmt.Printf("SpacesLen::%d \n", len(this.Spaces))
 }

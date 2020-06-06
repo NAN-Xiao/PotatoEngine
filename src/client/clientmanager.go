@@ -65,7 +65,7 @@ func (this *ClientMgr) RemoveCLient(cl *Client) {
 func (this *ClientMgr) RemoveCLientByID(cid uint32) {
 	v, o := this._clients[cid]
 	if o == true {
-		delete(this._clients, v._cid)
+		delete(this._clients, v.UserID)
 	}
 }
 

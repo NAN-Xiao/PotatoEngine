@@ -1,8 +1,6 @@
 package login
 
 import (
-	"fmt"
-	"net"
 	"potatoengine/src/server"
 	"potatoengine/src/space"
 )
@@ -20,10 +18,8 @@ func (this *LoginServer) Initialize() {
 func (this *LoginServer) Begin() {
 	ok := this.RunSpace()
 	if ok == false {
-		fmt.Println("not have any space")
 		return
 	}
-	fmt.Println("GaterServer Started")
 }
 
 func (this *LoginServer) Run() {
@@ -36,9 +32,11 @@ func (this *LoginServer) Stop() {
 //启动所有space的go
 ///新建LoginServer
 func NewLoginServer() server.IServer {
-	sr := &LoginServer{struct {
-		Listener *net.TCPListener
-		Spaces   map[string]space.ISpace
-	}{Listener: nil, Spaces: make(map[string]space.ISpace)}}
+	sr := &LoginServer{
+		server.BaseServer{
+			Listener: nil,
+			Spaces:   make(map[string]space.ISpace),
+		},
+	}
 	return sr
 }
