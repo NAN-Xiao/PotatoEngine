@@ -1,4 +1,4 @@
-package spacetest
+package main
 
 import (
 	"fmt"

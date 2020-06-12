@@ -37,7 +37,7 @@ func LaunchServer() {
 func RegistSpace(name ServerName, sp space.ISpace) {
 
 	if ServerMap == nil {
-		fmt.Printf("sermap :%s is null",name)
+		fmt.Printf("sermap :%s is null", name)
 		return
 	}
 	for m := range ServerMap {
