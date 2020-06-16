@@ -1,17 +1,21 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"potatoengine/src/agent"
+	"potatoengine/src/db"
 	"potatoengine/src/message"
 	"potatoengine/src/space"
 )
 
-//type Handle interface {
-//	//ServeHTTP(ResponseWriter, *Request)
-//}
+//Json字段必须大写
+type UserInfo struct {
+	Name string `json:"username"`
+	Pass string `json:"password"`
+}
 
 type LoginSpace struct {
 	space.BaseSpace
@@ -20,33 +24,36 @@ type LoginSpace struct {
 func Login(writer http.ResponseWriter, request *http.Request) {
 	// print(request)
 	buf, err := ioutil.ReadAll(request.Body)
-	fmt.Println("loging server started")
+	fmt.Println("Server response")
 	//panic(err)
-	if err != nil {
+	if err != nil || buf == nil || len(buf) <= 0 {
 		print(err)
 		return
 	}
-	if buf == nil {
-		print("buf is nil")
-		return
-	}
-	if len(buf) <= 0 {
-		print("buf is 0")
-		return
-	}
-	fmt.Println(string(buf))
-	// er := proto.Unmarshal(buf, nil)
-	// if er != nil {
-	// 	return
-	// }
-	// sql := db.GetSQLManager().GetSQL()
-	// if sql == nil {
-	// 	return
-	// }
-	// var username string
-	// var userpassword string
+	//fmt.Println(string(buf))
+	var info UserInfo
+	err = json.Unmarshal(buf, info)
+	fmt.Println("222", info.Name)
 
-	// rows, err := sql.Query(" SELECT * FROM user")
+	if err != nil {
+		print("Unmarshal err")
+		return
+	}
+	sql := db.GetSQLManager().GetSQL()
+	if sql == nil {
+		return
+	}
+	myquery := fmt.Sprintf("SELECT * FROM user Where 'username'=='%s' AND 'password'=='%s'", info.Name, info.Pass)
+	row := sql.QueryRow(myquery)
+
+	var name string
+	var password string
+	err = row.Scan(&name, &password)
+	if err != nil {
+
+	}
+	print(name)
+	print(password)
 	// for rows.Next() {
 	// 	var id int
 	// 	var name string
