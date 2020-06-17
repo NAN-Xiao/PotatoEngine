@@ -13,6 +13,7 @@ import (
 
 //Json字段必须大写
 type UserInfo struct {
+	Id   int    `json:"id"`
 	Name string `json:"username"`
 	Pass string `json:"password"`
 }
@@ -30,41 +31,40 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		print(err)
 		return
 	}
-	//fmt.Println(string(buf))
-	var info UserInfo
-	err = json.Unmarshal(buf, info)
-	fmt.Println("222", info.Name)
-
+	//反序列化json
+	info := UserInfo{}
+	err = json.Unmarshal(buf, &info)
 	if err != nil {
 		print("Unmarshal err")
 		return
 	}
 	sql := db.GetSQLManager().GetSQL()
-	if sql == nil {
+
+	if sql == nil || sql.Ping() != nil {
+		print("sql not started")
 		return
 	}
-	myquery := fmt.Sprintf("SELECT * FROM user Where 'username'=='%s' AND 'password'=='%s'", info.Name, info.Pass)
-	row := sql.QueryRow(myquery)
+	myquery := fmt.Sprintf("SELECT * FROM `game`.`userinfo` WHERE `username` = '%s'AND`password`='%s'", info.Name, info.Pass) //, info.Pass)
+	rows := sql.QueryRow(myquery)
 
-	var name string
-	var password string
-	err = row.Scan(&name, &password)
-	if err != nil {
-
+	if rows == nil {
+		print("not find \n")
+		return
 	}
-	print(name)
-	print(password)
-	// for rows.Next() {
-	// 	var id int
-	// 	var name string
-	// 	var password string
-	// 	err = rows.Scan(&id, &name, &password)
-	// 	if username == name && password == userpassword {
-	// 		matching = true
-	// 		break
-	// 	}
-	// 	fmt.Println(id, name, password)
-	// }
+	var id int
+	var name string
+	var pass string
+
+	rows.Scan(&id, &name, &pass)
+	if id < 0 {
+		//todo
+		//没有id或者id错误
+	}
+	//todo
+	//生成token返回token
+	//存到redis key是id value是token
+
+	//返回登陆成功消息
 
 	// if matching == true {
 	// 	writer.Write([]byte{1})
