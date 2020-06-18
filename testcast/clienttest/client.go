@@ -10,7 +10,6 @@ func main() {
 	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:8999")
 	if err != nil {
 		fmt.Println("addr is err")
-
 		return
 	}
 
@@ -21,7 +20,6 @@ func main() {
 	}
 	go func() {
 		for {
-
 			conn.Write([]byte("hello"))
 		}
 	}()

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/binary"
 	"encoding/json"
 	"net/http"
 )
@@ -16,14 +17,16 @@ func main() {
 	url := "http://0.0.0.0:8999/login?a=1"
 	// sc := []byte("client send")
 	// buf := bytes.NewBuffer(sc)
-
 	info := UserInfo{
 		Name: "xiaonan",
 		Pass: "123456",
 	}
-
+	//print(time.Now().Unix())
 	data, _ := json.Marshal(info)
-	reqest, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	//序列化json到二进制
+	buf:=new(bytes.Buffer)
+	binary.Write(buf,binary.LittleEndian,data)
+	reqest, err := http.NewRequest("POST", url, buf)
 	if err != nil {
 		return
 	}

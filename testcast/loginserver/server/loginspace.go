@@ -3,12 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	_ "github.com/go-redis/redis"
 	"io/ioutil"
 	"net/http"
 	"potatoengine/src/agent"
 	"potatoengine/src/db"
 	"potatoengine/src/message"
 	"potatoengine/src/space"
+	"time"
 )
 
 //Json字段必须大写
@@ -26,6 +28,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 	// print(request)
 	buf, err := ioutil.ReadAll(request.Body)
 	fmt.Println("Server response")
+	print(buf)
 	//panic(err)
 	if err != nil || buf == nil || len(buf) <= 0 {
 		print(err)
@@ -61,9 +64,17 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		//没有id或者id错误
 	}
 	//todo
+
 	//生成token返回token
 	//存到redis key是id value是token
-
+	redis, erro := db.GetRedisManager().GetDB()
+	if erro != nil {
+		return
+	}
+	if _, err := redis.Ping().Result(); err != nil {
+		print("redis server not connected")
+		return
+	}
 	//返回登陆成功消息
 
 	// if matching == true {
@@ -78,6 +89,22 @@ func (this *LoginSpace) Process() {
 	http.HandleFunc("/login", Login)
 	http.ListenAndServe("0.0.0.0:8999", nil)
 	//fmt.Println("loging server started")
+}
+
+//根据时间 id password计算toke
+func CenerateToken(name string, password string) (string, error) {
+	if &name == nil || name == "" {
+		err := fmt.Errorf("username is nil")
+		return "", err
+	}
+	if password == "" || &password == nil {
+		err := fmt.Errorf("password is nil")
+		return "", err
+
+	}
+	token := fmt.Sprintf("%s%s%s", name, password, time.Now().Unix())
+	print(token)
+	return token, nil
 }
 
 //agent 进入场景
