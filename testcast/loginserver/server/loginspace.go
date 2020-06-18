@@ -11,16 +11,23 @@ import (
 	"potatoengine/src/db"
 	"potatoengine/src/message"
 	"potatoengine/src/space"
+	"potatoengine/src/utility"
 	"time"
 )
+
+//todo 定义消息类型（登陆请求 注册请求  账号密码错误 登陆错误 登陆成功,服务器异常）
+
 //登录请求
 type LoginRequest struct {
-
 }
+
 //返回消息
 type LoginResponse struct {
-
+	Msgid int
+	Uid   int
+	Token string
 }
+
 //Json字段必须大写
 type UserInfo struct {
 	Id   int    `json:"id"`
@@ -33,83 +40,104 @@ type LoginSpace struct {
 }
 
 func Login(writer http.ResponseWriter, request *http.Request) {
-	// print(request)
+	responsmsg := &LoginResponse{
+		Msgid: 0,
+		Uid:   0,
+		Token: "",
+	}
+	var responsdata []byte
 	buf, err := ioutil.ReadAll(request.Body)
 	fmt.Println("Server response")
 	print(buf)
-	//panic(err)
 	if err != nil || buf == nil || len(buf) <= 0 {
-		print(err)
+		responsmsg.Msgid = 0
+		responsdata = utility.ConvertToBytes(responsmsg)
+		writer.Write(responsdata)
 		return
 	}
+	//todo 以后修改成二进制
 	//反序列化json
 	info := UserInfo{}
-	err = json.Unmarshal(buf, &info)
-	if err != nil {
-		print("Unmarshal err")
+	if err = json.Unmarshal(buf, &info); err != nil {
+		responsmsg.Msgid = 0
+		responsdata = utility.ConvertToBytes(responsmsg)
+		writer.Write(responsdata)
 		return
 	}
+	//建立mysql连接 查询账号数据
 	sql := db.GetSQLManager().GetSQL()
-
 	if sql == nil || sql.Ping() != nil {
 		print("sql not started")
-		return
-	}
-	myquery := fmt.Sprintf("SELECT * FROM `game`.`userinfo` WHERE `username` = '%s'AND`password`='%s'", info.Name, info.Pass) //, info.Pass)
-	rows := sql.QueryRow(myquery)
-
-	if rows == nil {
-		print("not find \n")
+		responsmsg.Msgid = 0
+		responsdata = utility.ConvertToBytes(responsmsg)
+		writer.Write(responsdata)
 		return
 	}
 	var id int
 	var name string
 	var pass string
-
+	myquery := fmt.Sprintf("SELECT * FROM `game`.`userinfo` WHERE `username` = '%s'AND`password`='%s'", info.Name, info.Pass)
+	rows := sql.QueryRow(myquery)
+	if rows == nil {
+		responsmsg.Msgid = 0
+		responsdata = utility.ConvertToBytes(responsmsg)
+		writer.Write(responsdata)
+		print("not find \n")
+		return
+	}
 	rows.Scan(&id, &name, &pass)
 	if id < 0 {
-		//todo
-		//没有id或者id错误
+		responsmsg.Msgid = 0
+		responsdata = utility.ConvertToBytes(responsmsg)
+		writer.Write(responsdata)
 	}
-	//todo
-
 	//生成token返回token
 	//存到redis key是id value是token
 	redis, erro := db.GetRedisManager().GetDB()
-	if erro != nil {
+	//检查redis
+	if erro == nil {
+		if _, err := redis.Ping().Result(); err != nil {
+			print("redis server not connected")
+			responsmsg.Msgid = 0
+			responsdata = utility.ConvertToBytes(responsmsg)
+			writer.Write(responsdata)
+			return
+		}
+	} else {
+		responsmsg.Msgid = 0
+		responsdata = utility.ConvertToBytes(responsmsg)
+		writer.Write(responsdata)
 		return
 	}
-	if _, err := redis.Ping().Result(); err != nil {
-		print("redis server not connected")
-		return
-	}
-	//返回登陆成功消息
-	token, err := CenerateToken(name, pass)
-	if err != nil {
-		//登录错误 返回登录错误
-		return
-	}
-	err=redis.Set(fmt.Sprintf("userid_%d", id), token,0).Err()
-	if err!=nil{
-		return
-	}
-	//todo
-	//返回登录成功的消息
-	writer.Write([]byte{1})
 
-	// 	return
-	// if matching == true {
-	// 	writer.Write([]byte{1})
-	// 	return
-	// }
-	// writer.Write([]byte{0})
+	//生成token
+	var token string
+	if token, err = CenerateToken(name, pass); err != nil {
+		responsmsg.Msgid = 0
+		responsdata = utility.ConvertToBytes(responsmsg)
+		writer.Write(responsdata)
+		return
+	}
+	//把token写入redis
+	if err = redis.Set(fmt.Sprintf("userid_%d", id), token, 0).Err(); err != nil {
+		responsmsg.Msgid = 0
+		responsdata = utility.ConvertToBytes(responsmsg)
+		writer.Write(responsdata)
+		return
+	}
+	//所有验证通过 填充responsmsg内容 返回客户端登陆结果
+	responsmsg.Msgid = 0
+	responsmsg.Token = token
+	responsmsg.Uid = id
+	responsdata = utility.ConvertToBytes(responsmsg)
+	writer.Write(responsdata)
+	//print("done")
 }
 
 //todo http监听返回登陆结果
 func (this *LoginSpace) Process() {
 	http.HandleFunc("/login", Login)
 	http.ListenAndServe("0.0.0.0:8999", nil)
-	//fmt.Println("loging server started")
 }
 
 //根据时间 id password计算toke md5
@@ -124,11 +152,11 @@ func CenerateToken(name string, password string) (string, error) {
 
 	}
 	st := fmt.Sprintf("%s%s%s", name, password, time.Now().Unix())
-	data:=[]byte(st)
-	mdstr:=md5.Sum(data)
-	print(mdstr)
-	return fmt.Sprintf("%x",mdstr), nil
+	data := []byte(st)
+	mdstr := md5.Sum(data)
+	return fmt.Sprintf("%x", mdstr), nil
 }
+
 //agent 进入场景
 func (this *LoginSpace) LeaveSpace(ag *agent.Agent) {
 	v, ok := this.Agents[ag.GetUserID()]

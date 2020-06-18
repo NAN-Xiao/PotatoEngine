@@ -3,9 +3,18 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/gob"
 	"encoding/json"
 	"net/http"
 )
+
+
+type LoginResponse struct {
+	Msgid int
+	Uid   int
+	Token string
+}
+
 
 type UserInfo struct {
 	Name string `json:"username"`
@@ -32,5 +41,11 @@ func main() {
 	}
 	defer reqest.Body.Close()
 	var cc = http.Client{}
-	cc.Do(reqest)
+	if response,err:=cc.Do(reqest);err==nil{
+		msg:=&LoginResponse{}
+		decoder:=gob.NewDecoder(response.Body)
+		decoder.Decode(msg)
+		print("get msge \n")
+		print(msg.Token)
+	}
 }
