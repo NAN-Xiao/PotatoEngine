@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	_ "github.com/go-redis/redis"
@@ -12,7 +13,14 @@ import (
 	"potatoengine/src/space"
 	"time"
 )
+//登录请求
+type LoginRequest struct {
 
+}
+//返回消息
+type LoginResponse struct {
+
+}
 //Json字段必须大写
 type UserInfo struct {
 	Id   int    `json:"id"`
@@ -76,7 +84,20 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	//返回登陆成功消息
+	token, err := CenerateToken(name, pass)
+	if err != nil {
+		//登录错误 返回登录错误
+		return
+	}
+	err=redis.Set(fmt.Sprintf("userid_%d", id), token,0).Err()
+	if err!=nil{
+		return
+	}
+	//todo
+	//返回登录成功的消息
+	writer.Write([]byte{1})
 
+	// 	return
 	// if matching == true {
 	// 	writer.Write([]byte{1})
 	// 	return
@@ -91,7 +112,7 @@ func (this *LoginSpace) Process() {
 	//fmt.Println("loging server started")
 }
 
-//根据时间 id password计算toke
+//根据时间 id password计算toke md5
 func CenerateToken(name string, password string) (string, error) {
 	if &name == nil || name == "" {
 		err := fmt.Errorf("username is nil")
@@ -102,11 +123,12 @@ func CenerateToken(name string, password string) (string, error) {
 		return "", err
 
 	}
-	token := fmt.Sprintf("%s%s%s", name, password, time.Now().Unix())
-	print(token)
-	return token, nil
+	st := fmt.Sprintf("%s%s%s", name, password, time.Now().Unix())
+	data:=[]byte(st)
+	mdstr:=md5.Sum(data)
+	print(mdstr)
+	return fmt.Sprintf("%x",mdstr), nil
 }
-
 //agent 进入场景
 func (this *LoginSpace) LeaveSpace(ag *agent.Agent) {
 	v, ok := this.Agents[ag.GetUserID()]
