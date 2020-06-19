@@ -1,0 +1,25 @@
+syntax = "proto3";
+package protobuf;
+
+message LoginServerBackItem {
+    string playerId = 1; // 角色id
+    string name = 2; // 角色名称
+    int64 lastLoginTime = 3; // 最后一次登录时间
+}
+
+
+
+message LoginServerBackRes {
+    message Data {
+        LoginServerBackItem player = 1; // 角色
+    }
+    int32 code = 1;
+    Data data = 2;
+}
+
+/**
+ * 被服务器踢出
+ */
+message KickByServer {
+    int32 reason = 1; // 被踢出原因
+}
