@@ -5,7 +5,9 @@ import (
 	"encoding/binary"
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"potatoengine/src/proto"
 )
 
 
@@ -23,6 +25,8 @@ type UserInfo struct {
 
 func main() {
 
+	rq:=new(proto.LoginResquest)
+	fmt.Printf("id::%d",rq.GetId())
 	url := "http://0.0.0.0:8999/login?a=1"
 	// sc := []byte("client send")
 	// buf := bytes.NewBuffer(sc)

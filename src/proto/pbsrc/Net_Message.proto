@@ -1,0 +1,19 @@
+syntax = "proto3";
+package proto;
+option  go_package="ProtoEngine/src/proto";
+
+import "Msg_ID.proto";
+
+message LoginResquest
+{
+//  Msg_ID.Msg_LoginRequest id=1;
+  string username=2;
+  string password=3;
+}
+
+message LoginResponse
+{
+//  .Msg_ID.LoginResponse id=1;
+  uint32 userid=2;
+  string token=3;
+}

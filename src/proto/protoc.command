@@ -4,4 +4,5 @@ cd $(dirname $BASH_SOURCE) || {
     exit 1
 }
 #ls $mydir
-protoc --proto_path=./pbsrc --go_out=./ --go_opt=paths=source_relative *.proto
+cd "$(pwd)/pbsrc"
+protoc -I=$(pwd $pbsrc) --go_out=../ --go_opt=paths=source_relative *.proto
