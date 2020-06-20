@@ -1,5 +1,6 @@
 syntax = "proto3";
-package protobuf;
+package proto;
+option go_package="ProtoEngine/src/proto"
 
 message LoginServerBackItem {
     string playerId = 1; // 角色id

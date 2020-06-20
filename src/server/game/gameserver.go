@@ -1,12 +1,12 @@
 package game
 
 import (
+	"potatoengine/src/proto"
 	"potatoengine/src/router"
 )
 
 type GameServer struct {
 	_router *router.IRouter
-
 }
 
 func (this *GameServer) RegisterSpace(rt *router.IRouter) {
