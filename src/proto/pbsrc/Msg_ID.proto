@@ -1,0 +1,12 @@
+syntax = "proto3";
+package proto;
+option  go_package="ProtoEngine/src/proto";
+
+enum Msg_ID
+{
+  Msg_Null=0;
+  //longin消息
+  Msg_LoginRequest            =10001;//登陆请求
+  Msg_LoginResponse           =10002;//登陆返回
+  Msg_LoginRegist             =10003;//注册请求
+}
