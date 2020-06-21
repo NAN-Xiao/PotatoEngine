@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"potatoengine/src/proto"
+	"reflect"
 )
 
 
@@ -25,8 +26,12 @@ type UserInfo struct {
 
 func main() {
 
-	rq:=new(proto.LoginResquest)
-	fmt.Printf("id::%d",rq.GetId())
+	rq:=proto.LoginResponse{
+		Userid: 32,
+	}
+	tp:=reflect.ValueOf(&rq)
+	v:=tp.Elem().FieldByName("TypeID")
+	
 	url := "http://0.0.0.0:8999/login?a=1"
 	// sc := []byte("client send")
 	// buf := bytes.NewBuffer(sc)

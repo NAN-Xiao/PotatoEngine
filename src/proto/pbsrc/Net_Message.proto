@@ -1,8 +1,13 @@
 syntax = "proto3";
 package proto;
 option  go_package="ProtoEngine/src/proto";
-
 import "Msg_ID.proto";
+import "google/protobuf/descriptor.proto";
+
+extend  google.protobuf.MessageOptions
+{
+    Msg_ID TypeID=2010;
+}
 
 message LoginResquest
 {
@@ -13,7 +18,7 @@ message LoginResquest
 
 message LoginResponse
 {
-//  .Msg_ID.LoginResponse id=1;
-  uint32 userid=2;
-  string token=3;
+  option (TypeID)=Msg_LoginResponse;
+  uint32 Userid=1;
+  string Token=2;
 }
