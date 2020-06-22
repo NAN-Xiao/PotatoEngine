@@ -6,7 +6,7 @@ import "google/protobuf/descriptor.proto";
 
 extend  google.protobuf.MessageOptions
 {
-    Msg_ID TypeID=2010;
+  ServerMsg_ID serverMsgID=2010;
 }
 
 message LoginResquest
@@ -18,7 +18,7 @@ message LoginResquest
 
 message LoginResponse
 {
-  option (TypeID)=Msg_LoginResponse;
+  option (serverMsgID)=Msg_LoginResponse;
   uint32 Userid=1;
   string Token=2;
 }

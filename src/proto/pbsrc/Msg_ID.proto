@@ -3,7 +3,7 @@ package proto;
 option  go_package="ProtoEngine/src/proto";
 
 
-  enum Msg_ID
+  enum ServerMsg_ID
   {
     Msg_Null=0;
     //longin消息

@@ -5,10 +5,12 @@ import (
 	"encoding/binary"
 	"encoding/gob"
 	"encoding/json"
-	"fmt"
+	"reflect"
+
+	//"fmt"
+	"github.com/golang/protobuf/descriptor"
 	"net/http"
 	"potatoengine/src/proto"
-	"reflect"
 )
 
 
@@ -29,9 +31,29 @@ func main() {
 	rq:=proto.LoginResponse{
 		Userid: 32,
 	}
-	tp:=reflect.ValueOf(&rq)
-	v:=tp.Elem().FieldByName("TypeID")
-	
+	_,md:=descriptor.MessageDescriptorProto(&rq)
+	if md==nil{
+		return
+	}
+	mo := md.Options
+	a:=reflect.ValueOf(*mo).FieldByName("extensionFields")
+	//index:=a.Len()
+	if a.Kind().String()=="map"{
+
+		t:=a.Type()
+		print(t.String())
+		print(a.Kind().String())
+	}
+
+
+
+
+
+
+
+
+
+
 	url := "http://0.0.0.0:8999/login?a=1"
 	// sc := []byte("client send")
 	// buf := bytes.NewBuffer(sc)
