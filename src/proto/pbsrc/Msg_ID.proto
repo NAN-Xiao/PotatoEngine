@@ -1,5 +1,5 @@
 syntax = "proto3";
-package proto;
+package Msg;
 option  go_package="ProtoEngine/src/proto";
 
 

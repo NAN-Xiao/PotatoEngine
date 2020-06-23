@@ -5,12 +5,10 @@ import (
 	"encoding/binary"
 	"encoding/gob"
 	"encoding/json"
-	"reflect"
-
-	//"fmt"
 	"github.com/golang/protobuf/descriptor"
+	"github.com/golang/protobuf/proto"
 	"net/http"
-	"potatoengine/src/proto"
+	msg "potatoengine/src/proto"
 )
 
 
@@ -28,22 +26,26 @@ type UserInfo struct {
 
 func main() {
 
-	rq:=proto.LoginResponse{
-		Userid: 32,
-	}
-	_,md:=descriptor.MessageDescriptorProto(&rq)
-	if md==nil{
-		return
-	}
-	mo := md.Options
-	a:=reflect.ValueOf(*mo).FieldByName("extensionFields")
-	//index:=a.Len()
-	if a.Kind().String()=="map"{
+	var rp interface{}=&msg.LoginResponse{
 
-		t:=a.Type()
-		print(t.String())
-		print(a.Kind().String())
 	}
+	des,ol:=rp.(descriptor.Message)
+	if ol{
+		_,md:=descriptor.MessageDescriptorProto(des)
+		ext,_:=proto.GetExtension(md.GetOptions(),msg.E_ServerMsgID)
+		print(ext)
+	}
+
+
+	//mo := md.Options
+	//a:=reflect.ValueOf(*mo).FieldByName("extensionFields")
+	//index:=a.Len()
+	//if a.Kind().String()=="map"{
+	//
+	//	t:=a.Type()
+	//	print(t.String())
+	//	print(a.Kind().String())
+	//}
 
 
 
