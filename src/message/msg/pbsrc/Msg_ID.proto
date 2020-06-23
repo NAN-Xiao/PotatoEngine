@@ -1,6 +1,6 @@
 syntax = "proto3";
 package Msg;
-option  go_package="ProtoEngine/src/proto";
+option  go_package="ProtoEngine/src/message";
 
 
   enum ServerMsg_ID

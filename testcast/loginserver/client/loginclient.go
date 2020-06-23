@@ -5,10 +5,11 @@ import (
 	"encoding/binary"
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/proto"
 	"net/http"
-	msg "potatoengine/src/proto"
+	msg "potatoengine/src/message/proto"
 )
 
 
@@ -32,28 +33,10 @@ func main() {
 	des,ol:=rp.(descriptor.Message)
 	if ol{
 		_,md:=descriptor.MessageDescriptorProto(des)
-		ext,_:=proto.GetExtension(md.GetOptions(),msg.E_ServerMsgID)
-		print(ext)
+		ext,_:=proto.GetExtension(md.GetOptions(), msg.E_ServerMsgID)
+		s:=fmt.Sprint(ext)
+		print(s)
 	}
-
-
-	//mo := md.Options
-	//a:=reflect.ValueOf(*mo).FieldByName("extensionFields")
-	//index:=a.Len()
-	//if a.Kind().String()=="map"{
-	//
-	//	t:=a.Type()
-	//	print(t.String())
-	//	print(a.Kind().String())
-	//}
-
-
-
-
-
-
-
-
 
 
 	url := "http://0.0.0.0:8999/login?a=1"

@@ -1,7 +1,7 @@
 package game
 
 import (
-	"potatoengine/src/proto"
+	"potatoengine/src/message/proto"
 	"potatoengine/src/router"
 )
 
