@@ -6,8 +6,8 @@ import (
 	"reflect"
 )
 
-var MessageMap map[int32]interface{}
-var MesssageRouterMap map[int32]func()
+var PBMessageMap map[int32]interface{}
+var PBMesssageRouterMap map[int32]func()
 
 func init() {
 	MessageMap = make(map[int32]interface{})
@@ -15,7 +15,7 @@ func init() {
 }
 
 //注册消息到messageMap
-func RegisteNetMessageID(msg interface{}) {
+func RegistePBNetMessageID(msg interface{}) {
 	id, ok := GetServerMsgID(msg)
 	if ok != nil {
 		return
@@ -30,7 +30,7 @@ func RegisteNetMessageID(msg interface{}) {
 
 
 //解析proto
-func DeCodeNetMessage(id int32, data []byte) (interface{}, error) {
+func DeCodePBNetMessage(id int32, data []byte) (interface{}, error) {
 	i, ok := MessageMap[id]
 	if ok {
 		msg, ok := i.(proto.Message)
@@ -44,7 +44,7 @@ func DeCodeNetMessage(id int32, data []byte) (interface{}, error) {
 	return nil, fmt.Errorf("decode msg :%d fail", id)
 }
 //序列化proto
-func UnCodeNetMessage(msg interface{}) ([]byte ,error) {
+func UnCodePBNetMessage(msg interface{}) ([]byte ,error) {
 	m,ok:=msg.(proto.Message)
 	if ok{
 		return  proto.Marshal(m)
