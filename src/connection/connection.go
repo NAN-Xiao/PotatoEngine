@@ -10,11 +10,11 @@ import (
 
 type TcpConnnetion struct {
 	_tcp_conn *net.TCPConn
-	_msg_que  *message.MessageQue
+	_msg_que  *netmessage.MessageQue
 	_closed   bool
 	_len      uint32
-	_wc       chan message.Messsage
-	_rc       chan message.Messsage
+	_wc       chan netmessage.Messsage
+	_rc       chan netmessage.Messsage
 }
 
 //send消息外部接口。
@@ -77,7 +77,7 @@ func (this *TcpConnnetion) ReadFormNet() bool {
 		}
 		id := binary.BigEndian.Uint32(tempbuff[0:3])
 		data := tempbuff[8:slen]
-		msg := message.NewMessage(id, data)
+		msg := netmessage.NewMessage(id, data)
 		this._rc <- *msg
 		tempbuff = make([]byte, 0)
 	}
@@ -100,7 +100,7 @@ func (conn *TcpConnnetion) WriteToNet() {
 }
 
 //外部读取消息从chanel
-func (conn *TcpConnnetion) ReadFromChannel() *message.Messsage {
+func (conn *TcpConnnetion) ReadFromChannel() *netmessage.Messsage {
 	msg, ok := <-conn._rc
 	if ok == true {
 		return &msg
@@ -109,7 +109,7 @@ func (conn *TcpConnnetion) ReadFromChannel() *message.Messsage {
 }
 
 //外部调用发送消息先放到chanel
-func (conn *TcpConnnetion) WriteToChannel(msg message.Messsage) {
+func (conn *TcpConnnetion) WriteToChannel(msg netmessage.Messsage) {
 	conn._wc <- msg
 }
 
@@ -129,12 +129,12 @@ func (conn *TcpConnnetion) CloseConnection() bool {
 func NewTcpConnection(tcpconn *net.TCPConn) *TcpConnnetion {
 	con := &TcpConnnetion{
 		_tcp_conn: tcpconn,
-		_msg_que:  message.NewMessageQueue(10),
+		_msg_que:  netmessage.NewMessageQueue(10),
 		//_buf:      make([]byte, 2048),
 		_closed: false,
 		_len:    4,
-		_wc:     make(chan message.Messsage, 200),
-		_rc:     make(chan message.Messsage, 200),
+		_wc:     make(chan netmessage.Messsage, 200),
+		_rc:     make(chan netmessage.Messsage, 200),
 	}
 	return con
 }

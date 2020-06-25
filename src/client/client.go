@@ -13,7 +13,7 @@ type Client struct {
 	_conn    *connection.TcpConnnetion
 }
 
-func (cl *Client) Send(msg *message.Messsage) {
+func (cl *Client) Send(msg *netmessage.Messsage) {
 	if msg == nil {
 		return
 	}

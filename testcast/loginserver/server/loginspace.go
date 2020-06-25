@@ -185,7 +185,7 @@ func NewLoginSpace(name string) space.ISpace {
 		SpaceID:    0,
 		Spacename:  name,
 		Agents:     make(map[uint32]*agent.Agent),
-		Spacechanl: make(chan *message.MsgPackage, 100),
+		Spacechanl: make(chan *netmessage.MsgPackage, 100),
 	}}
 	return sp
 }

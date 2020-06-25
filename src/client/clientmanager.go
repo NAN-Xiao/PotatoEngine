@@ -80,7 +80,7 @@ func GetClientMgr() *ClientMgr {
 	return instance
 }
 //广播消息
-func (mgr *ClientMgr) BroadcastMessage(msg *message.Messsage) {
+func (mgr *ClientMgr) BroadcastMessage(msg *netmessage.Messsage) {
 
 	if mgr._clients == nil {
 		return

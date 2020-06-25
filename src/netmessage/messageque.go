@@ -1,4 +1,4 @@
-package message
+package netmessage
 
 type MessageQue struct {
 	_que []*Messsage

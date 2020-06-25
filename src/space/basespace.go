@@ -9,7 +9,7 @@ type BaseSpace struct {
 	SpaceID    uint32
 	Spacename  string
 	Agents     map[uint32]*agent.Agent
-	Spacechanl chan *message.MsgPackage
+	Spacechanl chan *netmessage.MsgPackage
 }
 
 //func (this *BaseSpace) Process() {
