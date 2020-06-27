@@ -8,4 +8,5 @@ type IServer interface {
 	RegisterSpace(sp space.ISpace)
 	Stop()
 	Run()
+	SpaceRun() bool
 }
