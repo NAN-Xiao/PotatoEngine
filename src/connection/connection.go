@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"net"
-	"potatoengine/src/message"
+	"potatoengine/src/netmessage"
 )
 
 type TcpConnnetion struct {
@@ -13,8 +13,8 @@ type TcpConnnetion struct {
 	_msg_que  *netmessage.MessageQue
 	_closed   bool
 	_len      uint32
-	_wc       chan netmessage.Messsage
-	_rc       chan netmessage.Messsage
+	_wc       chan netmessage.MsgPackage
+	_rc       chan netmessage.MsgPackage
 }
 
 //send消息外部接口。
@@ -77,7 +77,7 @@ func (this *TcpConnnetion) ReadFormNet() bool {
 		}
 		id := binary.BigEndian.Uint32(tempbuff[0:3])
 		data := tempbuff[8:slen]
-		msg := netmessage.NewMessage(id, data)
+		msg := netmessage.PackMessagePackage(int32(id),0, data)
 		this._rc <- *msg
 		tempbuff = make([]byte, 0)
 	}
@@ -92,15 +92,21 @@ func (conn *TcpConnnetion) WriteToNet() {
 		return
 	}
 	data := <-conn._wc
-	pb, err := proto.Marshal((*data.GetData()))
-	if err == nil {
+
+	msg,ok:=data.GetMessage().(proto.Message)
+	if ok==false{
 		return
 	}
-	conn._tcp_conn.Write(pb)
+
+	buf,err:=proto.Marshal(msg)
+	if err!=nil{
+		return
+	}
+	conn._tcp_conn.Write(buf)
 }
 
 //外部读取消息从chanel
-func (conn *TcpConnnetion) ReadFromChannel() *netmessage.Messsage {
+func (conn *TcpConnnetion) ReadFromChannel() *netmessage.MsgPackage {
 	msg, ok := <-conn._rc
 	if ok == true {
 		return &msg
@@ -109,7 +115,7 @@ func (conn *TcpConnnetion) ReadFromChannel() *netmessage.Messsage {
 }
 
 //外部调用发送消息先放到chanel
-func (conn *TcpConnnetion) WriteToChannel(msg netmessage.Messsage) {
+func (conn *TcpConnnetion) WriteToChannel(msg netmessage.MsgPackage) {
 	conn._wc <- msg
 }
 
@@ -133,8 +139,8 @@ func NewTcpConnection(tcpconn *net.TCPConn) *TcpConnnetion {
 		//_buf:      make([]byte, 2048),
 		_closed: false,
 		_len:    4,
-		_wc:     make(chan netmessage.Messsage, 200),
-		_rc:     make(chan netmessage.Messsage, 200),
+		_wc:     make(chan netmessage.MsgPackage, 200),
+		_rc:     make(chan netmessage.MsgPackage, 200),
 	}
 	return con
 }

@@ -3,8 +3,7 @@ package client
 import (
 	"net"
 	"potatoengine/src/connection"
-	"potatoengine/src/dispatcher"
-	"potatoengine/src/message"
+	"potatoengine/src/netmessage"
 )
 
 type Client struct {
@@ -13,7 +12,9 @@ type Client struct {
 	_conn    *connection.TcpConnnetion
 }
 
-func (cl *Client) Send(msg *netmessage.Messsage) {
+
+
+func (cl *Client) Send(msg *netmessage.MsgPackage) {
 	if msg == nil {
 		return
 	}
@@ -28,7 +29,7 @@ func (cl *Client) OnConnection() {
 			cl._conn.WriteToNet()
 			msg := cl._conn.ReadFromChannel()
 			if &msg != nil {
-				dispatcher.DispatcherMessage(cl.UserID, cl.PlayerID, msg)
+				//dispatcher.DispatcherMessage(cl.UserID, cl.PlayerID, msg)
 			}
 		}
 	}()

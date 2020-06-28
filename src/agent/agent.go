@@ -2,7 +2,7 @@ package agent
 
 import (
 	"potatoengine/src/client"
-	"potatoengine/src/message"
+	"potatoengine/src/netmessage"
 )
 
 type Agent struct {

@@ -1,8 +1,10 @@
 package dispatcher
 
-import "potatoengine/src/message"
+import (
+	"potatoengine/src/netmessage"
+)
 
-var Dispatch map[uint32]func(pk *netmessage.MsgPackage)
+var Dispatch map[int32]func(pk *netmessage.MsgPackage)
 
 //根据id处理消息
 
@@ -11,9 +13,9 @@ func init() {
 }
 
 //消除分发函数注册到map
-func RegistDispathMap(id uint32, f func(msgPackage *netmessage.MsgPackage)) {
+func RegistDispathMap(id int32, f func(msgPackage *netmessage.MsgPackage)) {
 	if Dispatch == nil {
-		Dispatch = make(map[uint32]func(msgPackage *netmessage.MsgPackage))
+		Dispatch = make(map[int32]func(msgPackage *netmessage.MsgPackage))
 	}
 	for _, ok := Dispatch[id]; ok == true; {
 		return
@@ -23,11 +25,11 @@ func RegistDispathMap(id uint32, f func(msgPackage *netmessage.MsgPackage)) {
 }
 
 //从map得到对应消息处理函数并打包message进行处理
-func DispatcherMessage(uid uint32,pid uint32,msg *netmessage.Messsage) {
+func DispatcherMessage(uid int32,pid int32,msg *netmessage.MsgPackage) {
 	if Dispatch == nil {
 		return
 	}
-	id := msg.GetID()
+	id,_:= netmessage.GetServerMsgID(msg)
 	if _, ok := Dispatch[id]; ok == false {
 
 		return

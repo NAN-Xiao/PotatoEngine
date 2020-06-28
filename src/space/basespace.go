@@ -2,7 +2,7 @@ package space
 
 import (
 	"potatoengine/src/agent"
-	"potatoengine/src/message"
+	"potatoengine/src/netmessage"
 )
 
 type BaseSpace struct {

@@ -10,8 +10,8 @@ var PBMessageMap map[int32]interface{}
 var PBMesssageRouterMap map[int32]func()
 
 func init() {
-	MessageMap = make(map[int32]interface{})
-	MesssageRouterMap = make(map[int32]func())
+	PBMessageMap = make(map[int32]interface{})
+	PBMesssageRouterMap = make(map[int32]func())
 }
 
 //注册消息到messageMap
@@ -20,18 +20,18 @@ func RegistePBNetMessageID(msg interface{}) {
 	if ok != nil {
 		return
 	}
-	_, has := MessageMap[id]
+	_, has := PBMessageMap[id]
 	if has {
 		return
 	}
-	MessageMap[id] = msg
+	PBMessageMap[id] = msg
 }
 //todo 应该还要注册消息处理函数到MesssageRouterMap
 
 
 //解析proto
 func DeCodePBNetMessage(id int32, data []byte) (interface{}, error) {
-	i, ok := MessageMap[id]
+	i, ok := PBMessageMap[id]
 	if ok {
 		msg, ok := i.(proto.Message)
 		if ok {

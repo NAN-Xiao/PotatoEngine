@@ -2,13 +2,13 @@ package server
 
 import (
 	"fmt"
-	"net"
 	"potatoengine/src/space"
 )
 
 type BaseServer struct {
-	Listener *net.TCPListener
+	//Listener *net.TCPListener
 	Spaces   map[string]space.ISpace
+	Name E_ServerNames
 }
 
 func (this *BaseServer) RegisterSpace(sp space.ISpace) {

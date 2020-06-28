@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"potatoengine/src/agent"
 	"potatoengine/src/db"
-	"potatoengine/src/message"
+	"potatoengine/src/netmessage"
 	"potatoengine/src/space"
 	"potatoengine/src/utility"
 	"time"
@@ -136,6 +136,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 
 //todo http监听返回登陆结果
 func (this *LoginSpace) Process() {
+	print("Login Space start")
 	http.HandleFunc("/login", Login)
 	http.ListenAndServe("0.0.0.0:8999", nil)
 }

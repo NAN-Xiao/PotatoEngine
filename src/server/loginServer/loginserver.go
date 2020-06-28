@@ -2,28 +2,19 @@ package login
 
 import (
 	"potatoengine/src/server"
+	"potatoengine/src/space"
 )
 
 type LoginServer struct {
-	serverName server.E_ServerNames
-	base server.BaseServer
+	server.BaseServer
 }
 
-//启动space
-func (this *LoginServer) Run() {
-	this.base.Run()
-}
-func (this *LoginServer) Stop() {
-	this.base.Stop()
-}
+func NewServer() *LoginServer {
 
-func NewServer() interface{} {
-
-	sp:=&LoginServer{
-		serverName: server.E_Loging,
-	}
+	sp :=&LoginServer{struct {
+		//Listener *net.TCPListener
+		Spaces   map[string]space.ISpace
+		Name     server.E_ServerNames
+	}{Spaces:make( map[string]space.ISpace) , Name: server.E_Loging}}
 	return sp
 }
-
-
-

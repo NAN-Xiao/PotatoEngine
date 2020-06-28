@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/proto"
-	message "potatoengine/src/message/msg"
+	message "potatoengine/src/netmessage/pbmessage"
+
+	//message "potatoengine/src/message/msg"
 )
 
 

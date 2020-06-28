@@ -2,7 +2,7 @@ package client
 
 import (
 	"fmt"
-	"potatoengine/src/message"
+	"potatoengine/src/netmessage"
 )
 
 //ClientMgr
@@ -80,7 +80,7 @@ func GetClientMgr() *ClientMgr {
 	return instance
 }
 //广播消息
-func (mgr *ClientMgr) BroadcastMessage(msg *netmessage.Messsage) {
+func (mgr *ClientMgr) BroadcastMessage(msg *netmessage.MsgPackage) {
 
 	if mgr._clients == nil {
 		return

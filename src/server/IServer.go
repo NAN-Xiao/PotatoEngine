@@ -9,4 +9,5 @@ type IServer interface {
 	Stop()
 	Run()
 	SpaceRun() bool
+
 }
