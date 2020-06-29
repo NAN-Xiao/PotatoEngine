@@ -7,15 +7,15 @@ import (
 )
 
 var PBMessageMap map[int32]interface{}
-var PBMesssageRouterMap map[int32]func()
+var PBMesssageHandleMap map[int32]func(interface{})
 
 func init() {
 	PBMessageMap = make(map[int32]interface{})
-	PBMesssageRouterMap = make(map[int32]func())
+	PBMesssageHandleMap = make(map[int32]func(interface{}))
 }
 
 //注册消息到messageMap
-func RegistePBNetMessageID(msg interface{}) {
+func RegistePBNetMessage(msg interface{}) {
 	id, ok := GetServerMsgID(msg)
 	if ok != nil {
 		return
@@ -26,8 +26,18 @@ func RegistePBNetMessageID(msg interface{}) {
 	}
 	PBMessageMap[id] = msg
 }
-//todo 应该还要注册消息处理函数到MesssageRouterMap
-
+// 应该还要注册消息处理函数到MesssageRouterMap
+func RegistePBNetMessageHandl(msg interface{},f func(interface{})) {
+	id, ok := GetServerMsgID(msg)
+	if ok != nil {
+		return
+	}
+	_, has := PBMesssageHandleMap[id]
+	if has {
+		return
+	}
+	PBMesssageHandleMap[id] = f
+}
 
 //解析proto
 func DeCodePBNetMessage(id int32, data []byte) (interface{}, error) {

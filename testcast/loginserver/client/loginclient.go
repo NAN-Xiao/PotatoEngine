@@ -1,58 +1,33 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/proto"
+	"net/http"
 	message "potatoengine/src/netmessage/pbmessage"
-
 	//message "potatoengine/src/message/msg"
 )
 
-
 func main() {
-
-	var rp interface{}=&message.LoginResponse{
-
+	url := "http://0.0.0.0:8999/login?a=1"
+	var rp =message.LoginResquest{
+		Username: "xiaonan",
+		Password: "123456",
 	}
-	des,ol:=rp.(descriptor.Message)
-	if ol{
-		_,md:=descriptor.MessageDescriptorProto(des)
-		ext,_:=proto.GetExtension(md.GetOptions(), message.E_ServerMsgID)
-		s:=fmt.Sprint(ext)
-		id,ok:=message.ServerMsg_ID_value[s]
-		if ok {
-			print(id)
-		}
-
-		//v:=message.ServerMsg_ID_name
-		//fmt.Sprintf(s)
+	data,_:=proto.Marshal(&rp)
+	reqest, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	if err != nil {
+		return
 	}
-
-
-	//url := "http://0.0.0.0:8999/login?a=1"
-	//// sc := []byte("client send")
-	//// buf := bytes.NewBuffer(sc)
-	//info := UserInfo{
-	//	Name: "xiaonan",
-	//	Pass: "123456",
-	//}
-	////print(time.Now().Unix())
-	//data, _ := json.Marshal(info)
-	////序列化json到二进制
-	//buf:=new(bytes.Buffer)
-	//binary.Write(buf,binary.LittleEndian,data)
-	//reqest, err := http.NewRequest("POST", url, buf)
-	//if err != nil {
-	//	return
-	//}
-	//defer reqest.Body.Close()
-	//var cc = http.Client{}
-	//if response,err:=cc.Do(reqest);err==nil{
-	//	msg:=&LoginResponse{}
-	//	decoder:=gob.NewDecoder(response.Body)
-	//	decoder.Decode(msg)
-	//	print("get msge \n")
-	//	print(msg.Token)
-	//}
+	defer reqest.Body.Close()
+	var cc = http.Client{}
+	if response,err:=cc.Do(reqest);err==nil{
+		msgresponse:=message.LoginResponse{}
+		var data []byte
+		response.Body.Read(data)
+		proto.Unmarshal(data,&msgresponse)
+		fmt.Println(msgresponse.Token)
+	}
+	fmt.Println("client end")
 }

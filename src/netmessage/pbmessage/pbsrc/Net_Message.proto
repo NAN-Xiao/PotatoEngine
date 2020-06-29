@@ -1,24 +1,29 @@
 syntax = "proto3";
 package Msg;
 option  go_package="ProtoEngine/src/message";
-import "Msg_ID.proto";
+import "Msg_Enum.proto";
 import "google/protobuf/descriptor.proto";
 
 extend  google.protobuf.MessageOptions
 {
   ServerMsg_ID serverMsgID=2010;
 }
-
+//返回错误消息
+message NetError
+{
+  option (serverMsgID)=Msg_Error;
+  EMsg_Error ErrorCode=1;
+}
 message LoginResquest
 {
-//  Msg_ID.Msg_LoginRequest id=1;
-  string username=2;
-  string password=3;
+  option (serverMsgID)=Msg_LoginRequest;
+  string username=1;
+  string password=2;
 }
 
 message LoginResponse
 {
   option (serverMsgID)=Msg_LoginResponse;
-  uint32 Userid=1;
+  int32 Userid=1;
   string Token=2;
 }

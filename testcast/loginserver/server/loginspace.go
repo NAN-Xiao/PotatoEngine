@@ -2,31 +2,20 @@ package main
 
 import (
 	"crypto/md5"
-	"encoding/json"
+
 	"fmt"
 	_ "github.com/go-redis/redis"
+	"github.com/golang/protobuf/proto"
 	"io/ioutil"
 	"net/http"
 	"potatoengine/src/agent"
 	"potatoengine/src/db"
-	"potatoengine/src/netmessage"
+	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/space"
-	"potatoengine/src/utility"
 	"time"
 )
 
 //todo 定义消息类型（登陆请求 注册请求  账号密码错误 登陆错误 登陆成功,服务器异常）
-
-//登录请求
-type LoginRequest struct {
-}
-
-//返回消息
-type LoginResponse struct {
-	Msgid int
-	Uid   int
-	Token string
-}
 
 //Json字段必须大写
 type UserInfo struct {
@@ -40,103 +29,88 @@ type LoginSpace struct {
 }
 
 func Login(writer http.ResponseWriter, request *http.Request) {
-	responsmsg := &LoginResponse{
-		Msgid: 0,
-		Uid:   0,
-		Token: "",
-	}
-	var responsdata []byte
+
+	fmt.Println("login space is runing")
 	buf, err := ioutil.ReadAll(request.Body)
-	fmt.Println("Server response")
-	print(buf)
 	if err != nil || buf == nil || len(buf) <= 0 {
-		responsmsg.Msgid = 0
-		responsdata = utility.ConvertToBytes(responsmsg)
-		writer.Write(responsdata)
+		fmt.Println("222")
 		return
 	}
-	//todo 以后修改成二进制
-	//反序列化json
-	info := UserInfo{}
-	if err = json.Unmarshal(buf, &info); err != nil {
-		responsmsg.Msgid = 0
-		responsdata = utility.ConvertToBytes(responsmsg)
-		writer.Write(responsdata)
+	//pb消息
+	responsdata := buf[4:]
+	var loginRequest=message.LoginResquest{}
+	err=proto.Unmarshal(responsdata,&loginRequest)
+	if err != nil {
+		fmt.Println("111")
 		return
 	}
-	//建立mysql连接 查询账号数据
-	sql := db.GetSQLManager().GetSQL()
-	if sql == nil || sql.Ping() != nil {
-		print("sql not started")
-		responsmsg.Msgid = 0
-		responsdata = utility.ConvertToBytes(responsmsg)
-		writer.Write(responsdata)
-		return
-	}
-	var id int
+	//查询数据库
+	var id int32
 	var name string
 	var pass string
-	myquery := fmt.Sprintf("SELECT * FROM `game`.`userinfo` WHERE `username` = '%s'AND`password`='%s'", info.Name, info.Pass)
-	rows := sql.QueryRow(myquery)
-	if rows == nil {
-		responsmsg.Msgid = 0
-		responsdata = utility.ConvertToBytes(responsmsg)
-		writer.Write(responsdata)
-		print("not find \n")
+	sql := db.GetSQLManager().GetSQL()
+	if sql == nil || sql.Ping() != nil {
+		//发送服务器错误消息
+		var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+		data, _ := errinfo.(proto.Message)
+		pb, _ := proto.Marshal(data)
+		writer.Write(pb)
 		return
 	}
-	rows.Scan(&id, &name, &pass)
-	if id < 0 {
-		responsmsg.Msgid = 0
-		responsdata = utility.ConvertToBytes(responsmsg)
-		writer.Write(responsdata)
+
+	myquery := fmt.Sprintf("SELECT * FROM `game`.`userinfo` WHERE `username` = '%s'AND`password`='%s'", loginRequest.Username, loginRequest.Password)
+	rows := sql.QueryRow(myquery)
+	//mysql错误
+	if rows != nil {
+		rows.Scan(&id, &name, &pass)
+		if id <= 0 {
+			var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_UserInfo}
+			data, _ := errinfo.(proto.Message)
+			pb, _ := proto.Marshal(data)
+			writer.Write(pb)
+			return
+		}
 	}
 	//生成token返回token
 	//存到redis key是id value是token
 	redis, erro := db.GetRedisManager().GetDB()
 	//检查redis
 	if erro == nil {
-		if _, err := redis.Ping().Result(); err != nil {
-			print("redis server not connected")
-			responsmsg.Msgid = 0
-			responsdata = utility.ConvertToBytes(responsmsg)
-			writer.Write(responsdata)
-			return
-		}
-	} else {
-		responsmsg.Msgid = 0
-		responsdata = utility.ConvertToBytes(responsmsg)
-		writer.Write(responsdata)
+		var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+		data, _ := errinfo.(proto.Message)
+		pb, _ := proto.Marshal(data)
+		writer.Write(pb)
 		return
 	}
-
 	//生成token
 	var token string
-	if token, err = CenerateToken(name, pass); err != nil {
-		responsmsg.Msgid = 0
-		responsdata = utility.ConvertToBytes(responsmsg)
-		writer.Write(responsdata)
+
+	if token, err = CenerateToken(name, pass); err == nil {
+		var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+		data, _ := errinfo.(proto.Message)
+		pb, _ := proto.Marshal(data)
+		writer.Write(pb)
 		return
 	}
 	//把token写入redis
 	if err = redis.Set(fmt.Sprintf("userid_%d", id), token, 0).Err(); err != nil {
-		responsmsg.Msgid = 0
-		responsdata = utility.ConvertToBytes(responsmsg)
-		writer.Write(responsdata)
+		var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+		data, _ := errinfo.(proto.Message)
+		pb, _ := proto.Marshal(data)
+		writer.Write(pb)
 		return
 	}
 	//所有验证通过 填充responsmsg内容 返回客户端登陆结果
-	responsmsg.Msgid = 0
-	responsmsg.Token = token
-	responsmsg.Uid = id
-	responsdata = utility.ConvertToBytes(responsmsg)
-	writer.Write(responsdata)
-	//print("done")
+	loginResponse:=message.LoginResponse{}
+	loginResponse.Userid=id
+	loginResponse.Token=token
+	data,_:=proto.Marshal(&loginResponse)
+	writer.Write(data)
 }
 
 //todo http监听返回登陆结果
 func (this *LoginSpace) Process() {
-	print("Login Space start")
+	fmt.Println("Login Space start")
 	http.HandleFunc("/login", Login)
 	http.ListenAndServe("0.0.0.0:8999", nil)
 }
@@ -166,6 +140,9 @@ func (this *LoginSpace) LeaveSpace(ag *agent.Agent) {
 		delete(this.Agents, v.GetUserID())
 	}
 }
+func (this *LoginSpace) GetID() int32 {
+	return this.SpaceID
+}
 
 //agent退出场景
 func (this *LoginSpace) EnterSpace(ag *agent.Agent) {
@@ -181,12 +158,12 @@ func (this *LoginSpace) GetName() string {
 	return this.Spacename
 }
 
-func NewLoginSpace(name string) space.ISpace {
-	sp := &LoginSpace{space.BaseSpace{
-		SpaceID:    0,
-		Spacename:  name,
-		Agents:     make(map[uint32]*agent.Agent),
-		Spacechanl: make(chan *netmessage.MsgPackage, 100),
-	}}
-	return sp
-}
+//func NewLoginSpace(name string) space.ISpace {
+//	sp := &LoginSpace{space.BaseSpace{
+//		SpaceID:    0,
+//		Spacename:  name,
+//		Agents:     make(map[uint32]*agent.Agent),
+//		Spacechanl: make(chan *netmessage.MsgPackage, 100),
+//	}}
+//	return sp
+//}

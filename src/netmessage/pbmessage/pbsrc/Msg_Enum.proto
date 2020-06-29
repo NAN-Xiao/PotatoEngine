@@ -5,9 +5,16 @@ option  go_package="ProtoEngine/src/message";
 
   enum ServerMsg_ID
   {
-    Msg_Null=0;
+    Msg_Error=0;
     //longin消息
     Msg_LoginRequest            =10001;//登陆请求
     Msg_LoginResponse           =10002;//登陆返回
     Msg_LoginRegist             =10003;//注册请求
   }
+
+enum EMsg_Error
+{
+  Default              =0;
+  DBClosed             =20001;//数据库错误
+  UserInfo             =20002;//账号信息错误
+}

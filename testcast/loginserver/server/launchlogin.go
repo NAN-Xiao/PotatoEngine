@@ -1,35 +1,34 @@
 package main
 
 import (
-	"fmt"
+	"potatoengine/src/agent"
 	"potatoengine/src/netmessage"
+	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/server"
-	login "potatoengine/src/server/loginServer"
+	"potatoengine/src/space"
 )
 func RegistServerInfo()  {
-
-	netmessage.RegistePBNetMessageID(&LoginRequest{})
-	netmessage.RegistePBNetMessageID(&LoginResponse{})
-
+	//注册消息
+	netmessage.RegistePBNetMessage(&message.LoginResquest{})
+	netmessage.RegistePBNetMessage(&message.LoginResponse{})
+	//注册消息处理句柄
 
 }
 func main() {
 	RegistServerInfo()
+	login:=&server.BaseServer{
+		Spaces: make(map[string]space.ISpace),
+		Name:   server.E_Loging,
+	}
+	//new space
+	sp :=LoginSpace{struct {
+		SpaceID    int32
+		Spacename  string
+		Agents     map[uint32]*agent.Agent
+		Spacechanl chan *netmessage.MsgPackage
+	}{SpaceID:0 , Spacename: "login", Agents: nil, Spacechanl:nil }}
 
-	login:=login.NewServer()
-	login.Name=server.E_Loging
-	//ser,ok:=login.BaseServer
-	//if ok{
-		server.AddServer(login.BaseServer)
-	//}
-
-	sp := NewLoginSpace("Login")
-	server.RegistSpace(server.E_Loging, sp)
-
-	server.LaunchServer()
-	//fmt.Println("child", &login)
-	b:= &login.BaseServer
-	fmt.Println("base", b)
-	//fmt.Println("server started")
-	//select {}
+	login.RegisterSpace(&sp)
+	login.Run()
+	select {}
 }

@@ -6,7 +6,6 @@ import (
 )
 
 type BaseServer struct {
-	//Listener *net.TCPListener
 	Spaces   map[string]space.ISpace
 	Name E_ServerNames
 }
@@ -18,11 +17,12 @@ func (this *BaseServer) RegisterSpace(sp space.ISpace) {
 	name := sp.GetName()
 	_, ok := this.Spaces[name]
 	if ok {
+		fmt.Printf("have current space::%s \n", name)
 		return
 	}
 	this.Spaces[name] = sp
 	fmt.Printf("SpaceAdded::%s \n", name)
-	fmt.Printf("SpacesLen::%d \n", len(this.Spaces))
+	//fmt.Printf("SpacesLen::%d \n", len(this.Spaces))
 }
 func (this *BaseServer) Stop() {
 }
@@ -43,17 +43,11 @@ func (this *BaseServer) SpaceRun() bool {
 		if sp == nil {
 			continue
 		}
-		fmt.Printf("RunSpace::getname(%s)>>\n", sp.GetName())
+		fmt.Printf("RunSpace Name::(%s)>>\n", sp.GetName())
 		go sp.Process()
 	}
-	//fmt.Println("runspace")
 	return true
 }
-func NewServer() *BaseServer {
-	sv:=&BaseServer{
 
-	}
-	return sv
-}
 
 
