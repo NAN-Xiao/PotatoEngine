@@ -31,9 +31,10 @@ type LoginSpace struct {
 func Login(writer http.ResponseWriter, request *http.Request) {
 
 	fmt.Println("login space is runing")
-	buf, err := ioutil.ReadAll(request.Body)
+	var buf, err = ioutil.ReadAll(request.Body)
+	fmt.Println(buf)
 	if err != nil || buf == nil || len(buf) <= 0 {
-		fmt.Println("222")
+		fmt.Println(err)
 		return
 	}
 	//pb消息
@@ -41,7 +42,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 	var loginRequest=message.LoginResquest{}
 	err=proto.Unmarshal(responsdata,&loginRequest)
 	if err != nil {
-		fmt.Println("111")
+		fmt.Println(err)
 		return
 	}
 	//查询数据库
