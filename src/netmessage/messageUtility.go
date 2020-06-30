@@ -29,29 +29,46 @@ func GetServerMsgID(msg interface{}) (int32, error) {
 	s := fmt.Errorf("%s not find extension for msgID", reflect.TypeOf(msg).Name())
 	return -1, s
 }
+
 //打包pbmessage到网络传输的byte数组
-func PackageNetMessage(m interface{}) []byte {
+func PackageNetMessage(m interface{}) ([]byte, error) {
 	id, err := GetServerMsgID(m)
-	fmt.Println(id)
-	if err == nil {
-		//序列化pb
-
-		msgdata, _ := proto.Marshal(m.(proto.Message))
-		//序列化id
-		iddata := new(bytes.Buffer)
-		binary.Write(iddata, binary.BigEndian, id)
-
-		//序列化长度
-		msglen := len(msgdata) + 8
-		fmt.Println(msglen)
-		len := new(bytes.Buffer)
-		binary.Write(len, binary.BigEndian, int32(msglen))
-
-		//组成buff
-		buff := len.Bytes()
-		buff = append(buff, iddata.Bytes()...)
-		buff = append(buff, msgdata...)
-		return buff
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	//序列化pb
+	msgdata,err:=UnCodePBNetMessage(m)
+	if err!=nil||msgdata==nil{
+		return nil, err
+	}
+	//序列化id
+	iddata := new(bytes.Buffer)
+	binary.Write(iddata, binary.BigEndian, id)
+
+	//序列化长度
+	msglen := len(msgdata) + 8
+	fmt.Println(msglen)
+	len := new(bytes.Buffer)
+	binary.Write(len, binary.BigEndian, int32(msglen))
+
+	//组成buff
+	buff := len.Bytes()
+	buff = append(buff, iddata.Bytes()...)
+	buff = append(buff, msgdata...)
+	return buff, nil
+}
+
+func UnPackNetMessage(data []byte,m interface{}) (int32,interface{}) {
+	i:=data[:4]
+	id:=binary.BigEndian.Uint32(i)
+	b:=data[4:]
+	msg,ok:=m.(proto.Message)
+	if ok==false{
+		return -1,nil
+	}
+	err:=proto.Unmarshal(b,msg)
+	if err!=nil{
+		return -1,nil
+	}
+	return int32(id),msg
 }

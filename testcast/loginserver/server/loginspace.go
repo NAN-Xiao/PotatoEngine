@@ -40,7 +40,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 	}
 	//pb消息
 
-	responsdata := buf[4:]
+	responsdata := buf[8:]
 	var loginRequest = message.LoginResquest{}
 	err = proto.Unmarshal(responsdata, &loginRequest)
 	if err != nil {
@@ -48,7 +48,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	d := buf[4:8]
-	id := binary.LittleEndian.Uint32(d)
+	id := binary.BigEndian.Uint32(d)
 	fn := netmessage.GetProcessFuction(int32(id))
 	if fn == nil {
 		return
@@ -62,7 +62,8 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		writer.Write(data)
 		return
 	}
-	msgdata, _ := netmessage.UnCodePBNetMessage(loginResponse)
+	//msgdata, _ := netmessage.UnCodePBNetMessage(loginResponse)
+	msgdata:=netmessage.PackageNetMessage(loginResponse)
 	writer.Write(msgdata)
 }
 

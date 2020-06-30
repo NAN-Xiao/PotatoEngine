@@ -15,6 +15,8 @@ func RegistServerInfo()  {
 }
 func main() {
 	RegistServerInfo()
+
+
 	login:=&server.BaseServer{
 		Spaces: make(map[string]space.ISpace),
 		Name:   server.E_Loging,

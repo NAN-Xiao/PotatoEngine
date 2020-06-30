@@ -12,7 +12,7 @@ var PBMesssageHandleMap map[int32] func(interface{})(interface{},interface{})
 
 func init() {
 	PBMessageMap = make(map[int32]interface{})
-	PBMesssageHandleMap = make(map[int32]func(interface{}))
+	PBMesssageHandleMap = make(map[int32] func(interface{})(interface{},interface{}))
 }
 
 //注册消息到messageMap

@@ -1,18 +1,19 @@
 package main
 
 import (
+	//"database/sql"
 	"fmt"
-	"github.com/golang/protobuf/proto"
+	//"github.com/golang/protobuf/proto"
 	"potatoengine/src/db"
-	"potatoengine/src/netmessage"
+	//"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 )
 
-func ProcessLoginRequest(m interface{}) ( interface{}, interface{}) {
+///处理登陆
+func ProcessLoginRequest(m interface{}) (interface{}, interface{}) {
 
-
-	var loginRequest,ok=m.(message.LoginResquest)
-	if ok==false{
+	var loginRequest, ok = m.(message.LoginResquest)
+	if ok == false {
 		var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_UserInfo}
 		return nil, errinfo
 	}
@@ -20,6 +21,7 @@ func ProcessLoginRequest(m interface{}) ( interface{}, interface{}) {
 	var id int32
 	var name string
 	var pass string
+
 	sql := db.GetSQLManager().GetSQL()
 	if sql == nil || sql.Ping() != nil {
 		//发送服务器错误消息
@@ -41,14 +43,14 @@ func ProcessLoginRequest(m interface{}) ( interface{}, interface{}) {
 	//存到redis key是id value是token
 	redis, erro := db.GetRedisManager().GetDB()
 	//检查redis
-	if erro == nil {
+	if erro != nil {
 		var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
 		return nil, errinfo
 	}
 	//生成token
 	var token string
 	token, err := CenerateToken(name, pass)
-	if err == nil {
+	if err != nil {
 		var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
 		return nil, errinfo
 	}
@@ -57,8 +59,8 @@ func ProcessLoginRequest(m interface{}) ( interface{}, interface{}) {
 		var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
 		return nil, errinfo
 	}
-	loginResponse:=message.LoginResponse{}
-	loginResponse.Userid=id
-	loginResponse.Token=token
-
+	loginResponse := message.LoginResponse{}
+	loginResponse.Userid = id
+	loginResponse.Token = token
+	return &loginResponse,nil
 }

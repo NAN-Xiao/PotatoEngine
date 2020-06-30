@@ -17,6 +17,7 @@ func main() {
 		Password: "123456",
 	}
 	data := netmessage.PackageNetMessage(&rp)
+
 	reqest, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
 		return
