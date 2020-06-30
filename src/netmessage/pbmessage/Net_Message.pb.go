@@ -71,7 +71,7 @@ func (x *NetError) GetErrorCode() EMsg_Error {
 	if x != nil {
 		return x.ErrorCode
 	}
-	return EMsg_Error_Default
+	return EMsg_Error_Non
 }
 
 type LoginResquest struct {

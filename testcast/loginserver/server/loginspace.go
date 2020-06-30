@@ -2,6 +2,8 @@ package main
 
 import (
 	"crypto/md5"
+	"encoding/binary"
+	"potatoengine/src/netmessage"
 
 	"fmt"
 	_ "github.com/go-redis/redis"
@@ -9,7 +11,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"potatoengine/src/agent"
-	"potatoengine/src/db"
 	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/space"
 	"time"
@@ -38,75 +39,31 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	//pb消息
+
 	responsdata := buf[4:]
-	var loginRequest=message.LoginResquest{}
-	err=proto.Unmarshal(responsdata,&loginRequest)
+	var loginRequest = message.LoginResquest{}
+	err = proto.Unmarshal(responsdata, &loginRequest)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	//查询数据库
-	var id int32
-	var name string
-	var pass string
-	sql := db.GetSQLManager().GetSQL()
-	if sql == nil || sql.Ping() != nil {
-		//发送服务器错误消息
-		var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-		data, _ := errinfo.(proto.Message)
-		pb, _ := proto.Marshal(data)
-		writer.Write(pb)
+	d := buf[4:8]
+	id := binary.LittleEndian.Uint32(d)
+	fn := netmessage.GetProcessFuction(int32(id))
+	if fn == nil {
 		return
 	}
-
-	myquery := fmt.Sprintf("SELECT * FROM `game`.`userinfo` WHERE `username` = '%s'AND`password`='%s'", loginRequest.Username, loginRequest.Password)
-	rows := sql.QueryRow(myquery)
-	//mysql错误
-	if rows != nil {
-		rows.Scan(&id, &name, &pass)
-		if id <= 0 {
-			var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_UserInfo}
-			data, _ := errinfo.(proto.Message)
-			pb, _ := proto.Marshal(data)
-			writer.Write(pb)
-			return
+	loginResponse, netError := fn(loginRequest)
+	if netError != nil {
+		data, _ := netmessage.UnCodePBNetMessage(&netError)
+		if data == nil {
+			data, _ = netmessage.DefaultNetErrorData()
 		}
-	}
-	//生成token返回token
-	//存到redis key是id value是token
-	redis, erro := db.GetRedisManager().GetDB()
-	//检查redis
-	if erro == nil {
-		var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-		data, _ := errinfo.(proto.Message)
-		pb, _ := proto.Marshal(data)
-		writer.Write(pb)
+		writer.Write(data)
 		return
 	}
-	//生成token
-	var token string
-
-	if token, err = CenerateToken(name, pass); err == nil {
-		var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-		data, _ := errinfo.(proto.Message)
-		pb, _ := proto.Marshal(data)
-		writer.Write(pb)
-		return
-	}
-	//把token写入redis
-	if err = redis.Set(fmt.Sprintf("userid_%d", id), token, 0).Err(); err != nil {
-		var errinfo interface{} = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-		data, _ := errinfo.(proto.Message)
-		pb, _ := proto.Marshal(data)
-		writer.Write(pb)
-		return
-	}
-	//所有验证通过 填充responsmsg内容 返回客户端登陆结果
-	loginResponse:=message.LoginResponse{}
-	loginResponse.Userid=id
-	loginResponse.Token=token
-	data,_:=proto.Marshal(&loginResponse)
-	writer.Write(data)
+	msgdata, _ := netmessage.UnCodePBNetMessage(loginResponse)
+	writer.Write(msgdata)
 }
 
 //todo http监听返回登陆结果
