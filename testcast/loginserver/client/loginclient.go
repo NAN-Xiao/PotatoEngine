@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/golang/protobuf/proto"
+	"io/ioutil"
 	"net/http"
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
-	//message "potatoengine/src/message/msg"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 		Username: "xiaonan",
 		Password: "123456",
 	}
-	data := netmessage.PackageNetMessage(&rp)
+	data,_:= netmessage.PackageNetMessage(&rp)
 
 	reqest, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
@@ -25,11 +25,11 @@ func main() {
 	defer reqest.Body.Close()
 	var cc = http.Client{}
 	if response, err := cc.Do(reqest); err == nil {
+		buf,_:=ioutil.ReadAll(response.Body)
+		fmt.Println(buf)
 		msgresponse := message.LoginResponse{}
-		var data []byte
-		response.Body.Read(data)
-		proto.Unmarshal(data, &msgresponse)
-		fmt.Println(msgresponse.Token)
+		proto.Unmarshal(buf[8:], &msgresponse)
+		fmt.Println("token:",msgresponse.Token)
 	}
 	fmt.Println("client end")
 }

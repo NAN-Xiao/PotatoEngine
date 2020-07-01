@@ -28,11 +28,6 @@ func (this *SQDB) GetSQL() *sql.DB {
 	return this._sdb
 }
 
-//func Initialize() {
-//
-//	//defer inst._sdb.Close() // 延迟关闭 db对象创建成功后才可以调用close方法
-//}
-
 func GetSQLManager() *SQDB {
 	if inst == nil||inst._init==false {
 		inst = &SQDB{

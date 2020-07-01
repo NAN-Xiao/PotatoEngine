@@ -10,7 +10,6 @@ import (
 
 type TcpConnnetion struct {
 	_tcp_conn *net.TCPConn
-	_msg_que  *netmessage.MessageQue
 	_closed   bool
 	_len      uint32
 	_wc       chan netmessage.MsgPackage
@@ -77,7 +76,7 @@ func (this *TcpConnnetion) ReadFormNet() bool {
 		}
 		id := binary.BigEndian.Uint32(tempbuff[0:3])
 		data := tempbuff[8:slen]
-		msg := netmessage.PackMessagePackage(int32(id),0, data)
+		msg := netmessage.PackMessagePackage(int32(id), 0, data)
 		this._rc <- *msg
 		tempbuff = make([]byte, 0)
 	}
@@ -93,13 +92,13 @@ func (conn *TcpConnnetion) WriteToNet() {
 	}
 	data := <-conn._wc
 
-	msg,ok:=data.GetMessage().(proto.Message)
-	if ok==false{
+	msg, ok := data.GetMessage().(proto.Message)
+	if ok == false {
 		return
 	}
 
-	buf,err:=proto.Marshal(msg)
-	if err!=nil{
+	buf, err := proto.Marshal(msg)
+	if err != nil {
 		return
 	}
 	conn._tcp_conn.Write(buf)
@@ -135,7 +134,7 @@ func (conn *TcpConnnetion) CloseConnection() bool {
 func NewTcpConnection(tcpconn *net.TCPConn) *TcpConnnetion {
 	con := &TcpConnnetion{
 		_tcp_conn: tcpconn,
-		_msg_que:  netmessage.NewMessageQueue(10),
+		//_msg_que:  netmessage.NewMessageQueue(10),
 		//_buf:      make([]byte, 2048),
 		_closed: false,
 		_len:    4,
