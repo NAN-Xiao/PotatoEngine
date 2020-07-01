@@ -2,29 +2,41 @@ package connection
 
 import (
 	"encoding/binary"
-	"fmt"
-	"github.com/golang/protobuf/proto"
 	"net"
 	"potatoengine/src/netmessage"
 )
 
 type Connnetion struct {
-	_conn *IConn
+	_conn IConn
 	_closed   bool
-	_len      uint32
 	_wc       chan netmessage.ServerMsgPackage
 	_rc       chan netmessage.ServerMsgPackage
 }
 
-func (conn *Connnetion) Listen() {
+func (this *Connnetion) Listen() {
 	tempbuff := make([]byte, 0)
 	nbuff := make([]byte, 2048)
+	addr,err:=net.ResolveTCPAddr("tcp","0,0,0,0:9000")
+	if err!=nil{
+		return
+	}
+
+	lisener,err:=net.ListenTCP("tcp",addr)
+	c,err:=lisener.AcceptTCP()
+	this._conn=&TcpConnect{
+		conn:c,
+	}
+	var t_buf []byte
+	var g_bug =make([]byte,0)
 	for {
-		rlen, err := conn._conn.Read(nbuff)
+		this._conn.Read(t_buf)
+		if len(t_buf)<=0{
+			continue
+		}
 		if err != nil {
 			break
 		}
-		tempbuff := append(tempbuff, nbuff[0:rlen]...)
+		tempbuff := append(g_bug, t_buf[0:len(t_buf)]...)
 		if len(tempbuff) < 8 {
 			continue
 		}
@@ -113,16 +125,14 @@ func (conn *Connnetion) Close() bool {
 }
 
 //新建一个连/保持tcpconn
-////新建的时候uid pid没有确认登陆前默认是0
-//func NewTcpConnection(tcpconn *net.TCPConn) *Connnetion {
-//	con := &Connnetion{
-//		_tcp_conn: tcpconn,
-//		//_msg_que:  netmessage.NewMessageQueue(10),
-//		//_buf:      make([]byte, 2048),
-//		_closed: false,
-//		_len:    4,
-//		_wc:     make(chan netmessage.ServerMsgPackage, 200),
-//		_rc:     make(chan netmessage.ServerMsgPackage, 200),
-//	}
-//	return con
-//}
+//新建的时候uid pid没有确认登陆前默认是0
+func NewTcpConnection(t ConnType) *Connnetion {
+	con := &Connnetion{
+		//_msg_que:  netmessage.NewMessageQueue(10),
+		//_buf:      make([]byte, 2048),
+		_closed: false,
+		_wc:     make(chan netmessage.ServerMsgPackage, 200),
+		_rc:     make(chan netmessage.ServerMsgPackage, 200),
+	}
+	return con
+}

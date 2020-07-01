@@ -3,6 +3,6 @@ package connection
 type ConnType string
 
 const (
-	Tcp  ConnType = "tcp"
-	Http ConnType = "http"
+	ETcp  ConnType = "tcp"
+	EHttp ConnType = "http"
 )
