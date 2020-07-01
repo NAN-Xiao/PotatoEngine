@@ -49,5 +49,9 @@ func (this *BaseServer) SpaceRun() bool {
 	return true
 }
 
+func NewServer()  {
+	
+}
+
 
 

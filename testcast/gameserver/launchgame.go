@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net"
 	"potatoengine/src/agent"
 	"potatoengine/src/connection"
 	"potatoengine/src/netmessage"
@@ -13,7 +14,6 @@ func RegistServerInfo() {
 
 	//netmessage.RegistePBNetMessageID(&message.LoginResquest{})
 	//netmessage.RegistePBNetMessageID(&message.LoginResponse{})
-
 }
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 		Spacename  string
 		Agents     map[uint32]*agent.Agent
 		Spacechanl chan netmessage.ServerMsgPackage
-	}{SpaceID: 0, Spacename: server.E_Gate, Agents: make(map[uint32]*agent.Agent), Spacechanl: make(chan netmessage.ServerMsgPackage)}}
+	}{SpaceID: 0, Spacename: "GateSpace", Agents: make(map[uint32]*agent.Agent), Spacechanl: make(chan netmessage.ServerMsgPackage)}}
 
 	game.RegisterSpace(&sp)
 	game.Run()

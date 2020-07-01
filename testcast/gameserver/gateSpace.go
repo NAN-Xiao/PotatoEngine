@@ -25,9 +25,7 @@ func (this *GateSpace) Process() {
 			break
 		}
 		go GateHandl(tcpcon)
-
 	}
-
 }
 func (this *GateSpace) GetName() string {
 	return this.Spacename

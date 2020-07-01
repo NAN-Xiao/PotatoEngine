@@ -1,12 +1,9 @@
 package connection
 
-import (
-	"potatoengine/src/netmessage"
-)
-
 type IConn interface {
-	SendMessage(msg *netmessage.MsgPackage)
+	//SendMessage(msg netmessage.ServerMsgPackage)
 	Read()
 	Write(data []byte)
-	CloseConnection() bool
+	Close() bool
+	Listen()
 }
