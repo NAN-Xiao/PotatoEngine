@@ -26,7 +26,7 @@ func main() {
 		SpaceID    int32
 		Spacename  string
 		Agents     map[uint32]*agent.Agent
-		Spacechanl chan *netmessage.MsgPackage
+		Spacechanl chan *netmessage.ServerMsgPackage
 	}{SpaceID:0 , Spacename: "login", Agents: nil, Spacechanl:nil }}
 
 	login.RegisterSpace(&sp)

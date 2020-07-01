@@ -1,9 +1,7 @@
 package netmessage
 
-/////////////////////////
-//用于服务器模块之间的通讯//
-/////////////////////////
-type MsgPackage struct {
+//用于服务器模块之间的通讯 和客户端用netmessagepackage
+type ServerMsgPackage struct {
 	//用户id
 	_uid int32
 	//角色id
@@ -14,17 +12,17 @@ type MsgPackage struct {
 	_msg interface{}
 }
 
-func (this *MsgPackage) GetMsgID() int32 {
+func (this *ServerMsgPackage) GetMsgID() int32 {
 	return this._mid
 }
-func (this *MsgPackage)GetMessage() interface{}  {
+func (this *ServerMsgPackage)GetMessage() interface{}  {
 	return this._msg
 }
 
 //打包成服务器间的消息模块
-func PackMessagePackage(uid int32, pid int32, msg interface{}) *MsgPackage {
+func PackMessagePackage(uid int32, pid int32, msg interface{}) *ServerMsgPackage {
 
-	pack := &MsgPackage{
+	pack := &ServerMsgPackage{
 		_uid:      uid,
 		_playerID: pid,
 		_msg:      msg,
