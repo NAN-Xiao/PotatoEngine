@@ -48,6 +48,13 @@ func GetProcessFuction(id int32) func(interface{})(interface{},interface{})  {
 	return nil
 }
 
+func GetPbMessage(i int32)  (interface{},bool){
+	f,ok:=PBMessageMap[i]
+	if ok{
+		return f,true
+	}
+	return nil,false
+}
 
 //解析proto
 func DeCodePBNetMessage(id int32, data []byte) (interface{}, error) {

@@ -2,12 +2,14 @@ package server
 
 import (
 	"fmt"
+	"potatoengine/src/connection"
 	"potatoengine/src/space"
 )
 
 type BaseServer struct {
-	Spaces   map[string]space.ISpace
-	Name E_ServerNames
+	Conn   connection.Connnetion
+	Spaces map[string]space.ISpace
+	Name   E_ServerNames
 }
 
 func (this *BaseServer) RegisterSpace(sp space.ISpace) {
@@ -27,11 +29,14 @@ func (this *BaseServer) RegisterSpace(sp space.ISpace) {
 func (this *BaseServer) Stop() {
 }
 
-func (this *BaseServer) Run(){
-	ok := this.SpaceRun()
-	if ok == false {
+func (this *BaseServer) Run() {
+	//启动space
+	if this.SpaceRun(){
+		fmt.Println("game server start space run is fail")
 		return
 	}
+	//启动监听
+	this.Conn.Listen()
 }
 func (this *BaseServer) SpaceRun() bool {
 	if this.Spaces == nil || len(this.Spaces) <= 0 {
@@ -49,9 +54,6 @@ func (this *BaseServer) SpaceRun() bool {
 	return true
 }
 
-func NewServer()  {
-	
+func NewServer() {
+
 }
-
-
-
