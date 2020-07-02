@@ -1,11 +1,9 @@
 package main
 
 import (
-	"net"
 	"potatoengine/src/agent"
 	"potatoengine/src/connection"
 	"potatoengine/src/netmessage"
-	message "potatoengine/src/netmessage/msg"
 	"potatoengine/src/server"
 	"potatoengine/src/space"
 )
@@ -17,11 +15,12 @@ func RegistServerInfo() {
 }
 
 func main() {
-
-	RegistServerInfo()
+	//RegistServerInfo()
+	//new server
 	game := &server.BaseServer{
-		Spaces: make(map[string]space.ISpace),
+		SpacesMap: make(map[string]space.ISpace),
 		Name:   server.E_Loging,
+		Conn: &connection.TcpConnect{},
 	}
 	//new space
 	sp := GateSpace{struct {
@@ -33,5 +32,6 @@ func main() {
 
 	game.RegisterSpace(&sp)
 	game.Run()
-	select {}
+	println("game server started")
+	select{}
 }

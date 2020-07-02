@@ -7,8 +7,8 @@ import (
 )
 
 type BaseServer struct {
-	Conn   connection.Connnetion
-	Spaces map[string]space.ISpace
+	Conn   connection.IConn
+	SpacesMap map[string]space.ISpace
 	Name   E_ServerNames
 }
 
@@ -17,21 +17,20 @@ func (this *BaseServer) RegisterSpace(sp space.ISpace) {
 		return
 	}
 	name := sp.GetName()
-	_, ok := this.Spaces[name]
+	_, ok := this.SpacesMap[name]
 	if ok {
 		fmt.Printf("have current space::%s \n", name)
 		return
 	}
-	this.Spaces[name] = sp
-	fmt.Printf("SpaceAdded::%s \n", name)
-	//fmt.Printf("SpacesLen::%d \n", len(this.Spaces))
+	this.SpacesMap[name] = sp
+	fmt.Printf("RegisterSpace::%s \n", name)
 }
 func (this *BaseServer) Stop() {
 }
 
 func (this *BaseServer) Run() {
 	//启动space
-	if this.SpaceRun(){
+	if !this.SpaceRun() {
 		fmt.Println("game server start space run is fail")
 		return
 	}
@@ -39,12 +38,12 @@ func (this *BaseServer) Run() {
 	this.Conn.Listen()
 }
 func (this *BaseServer) SpaceRun() bool {
-	if this.Spaces == nil || len(this.Spaces) <= 0 {
-		fmt.Printf("this server have any space ::%d \n", len(this.Spaces))
+	if this.SpacesMap == nil || len(this.SpacesMap) <= 0 {
+		fmt.Printf("this server have any space ::%d \n", len(this.SpacesMap))
 		return false
 	}
-	for s := range this.Spaces {
-		sp := this.Spaces[s]
+	for s := range this.SpacesMap {
+		sp := this.SpacesMap[s]
 		if sp == nil {
 			continue
 		}
@@ -54,6 +53,3 @@ func (this *BaseServer) SpaceRun() bool {
 	return true
 }
 
-func NewServer() {
-
-}

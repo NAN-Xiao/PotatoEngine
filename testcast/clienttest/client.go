@@ -5,7 +5,7 @@ import (
 	"github.com/golang/protobuf/descriptor"
 	pb "github.com/golang/protobuf/proto"
 	"net"
-	message "potatoengine/src/netmessage/msg"
+	message "potatoengine/src/netmessage/pbmessage"
 )
 
 func main() {

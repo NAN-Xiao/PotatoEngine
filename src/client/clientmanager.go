@@ -39,7 +39,7 @@ func (this *ClientMgr) AddClient(cl *Client) {
 		}
 	}
 	this._tempclient = append(this._tempclient, cl)
-	cl.OnConnection()
+	//cl.OnConnection()
 	fmt.Println("a client connected")
 }
 
@@ -80,7 +80,7 @@ func GetClientMgr() *ClientMgr {
 	return instance
 }
 //广播消息
-func (mgr *ClientMgr) BroadcastMessage(msg *netmessage.MsgPackage) {
+func (mgr *ClientMgr) BroadcastMessage(msg *netmessage.ServerMsgPackage) {
 
 	if mgr._clients == nil {
 		return

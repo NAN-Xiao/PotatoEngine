@@ -12,8 +12,8 @@ type Agent struct {
 	_playerid uint32
 	//当前角色所在场景的id
 	_spaceID    uint32
-	Sendchan    chan *netmessage.MsgPackage
-	Receivechan chan *netmessage.MsgPackage
+	Sendchan    chan *netmessage.ServerMsgPackage
+	Receivechan chan *netmessage.ServerMsgPackage
 }
 
 //得到clientid
@@ -26,7 +26,7 @@ func (this *Agent) GetPlayerID() uint32 {
 	return this._playerid
 }
 
-func (this *Agent) SendMessage(msgPackage *netmessage.MsgPackage) {
+func (this *Agent) SendMessage(msgPackage *netmessage.ServerMsgPackage) {
 	//todo
 	//把当前消息打包成网络消息发送给client
 	//this._client.Send(msgPackage)
@@ -46,8 +46,8 @@ func NewAgent() *Agent {
 	ag := &Agent{
 		_client:     nil,
 		_playerid:   0,
-		Sendchan:    make(chan *netmessage.MsgPackage, 20),
-		Receivechan: make(chan *netmessage.MsgPackage, 20),
+		Sendchan:    make(chan *netmessage.ServerMsgPackage, 20),
+		Receivechan: make(chan *netmessage.ServerMsgPackage, 20),
 	}
 	return ag
 }
