@@ -46,7 +46,7 @@ func (this *TcpConnect) Listen() {
 				if n<4{
 					continue
 				}
-				len := binary.BigEndian.Uint32(buf)
+				len := binary.BigEndian.Uint32(buf)-4
 				buf = make([]byte, len)
 				n,_=io.ReadFull(conn,buf)
 				if n<4{
