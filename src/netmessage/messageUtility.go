@@ -59,10 +59,17 @@ func PackageNetMessage(m interface{}) ([]byte, error) {
 }
 //解压网络传送的数据（截取长度之后的数据）并以interface返回
 func UnPackNetMessage(data []byte) (int32,interface{}) {
-	i:=data[4:8]
+	i:=data[0:4]
 	id:=binary.BigEndian.Uint32(i)
+	if id<=0{
+		return -1,nil
+	}
 	b:=data[4:]
-	m,ok:=PBMessageMap[int32(id)]
+	m,_:=PBMessageMap[int32(id)]
+	if m==nil{
+		fmt.Printf("pbmessagemap not regist  %s  message \n",id)
+		return -1,nil
+	}
 	msg,ok:=m.(proto.Message)
 	if ok==false{
 		return -1,nil

@@ -1,4 +1,4 @@
-package main
+package space
 
 import (
 	"potatoengine/src/agent"

@@ -1,7 +1,10 @@
 package connection
 
 import (
+	"encoding/binary"
+	"io"
 	"net"
+	"potatoengine/src/netmessage"
 )
 
 type TcpConnect struct {
@@ -34,32 +37,32 @@ func (this *TcpConnect) Listen() {
 		}
 		println("new client")
 		this.conn=append(this.conn,c)
-		//go func(conn *net.TCPConn) {
-		//	for {
-		//		if this.conn==nil{
-		//			continue
-		//		}
-		//		println("tcp listening")
-		//		var buf = make([]byte, 4)
-		//		_, err = io.ReadFull(conn,buf)
-		//		if err != nil {
-		//			fmt.Println(err)
-		//			continue
-		//		}
-		//		len := binary.BigEndian.Uint32(buf)
-		//		buf = make([]byte, len)
-		//		_, err = io.ReadFull(conn,buf)
-		//		if err!=nil{
-		//			continue
-		//		}
-		//		id, obj := netmessage.UnPackNetMessage(buf)
-		//		if id < 0 || obj == nil {
-		//			//消息错误
-		//			continue
-		//		}
-		//		//todo 接受数据分发消息
-		//		println("message")
-		//	}
-		//}(c)
+
+		go func(conn *net.TCPConn) {
+			println("tcp listening")
+			for {
+				var buf = make([]byte, 4)
+				n ,_:= io.ReadFull(conn,buf)
+				if n<4{
+					continue
+				}
+				len := binary.BigEndian.Uint32(buf)
+				buf = make([]byte, len)
+				n,_=io.ReadFull(conn,buf)
+				if n<4{
+					continue
+				}
+				//if err!=nil{
+				//	continue
+				//}
+				id, obj := netmessage.UnPackNetMessage(buf)
+				if id < 0 || obj == nil {
+					//消息错误
+					continue
+				}
+				//todo 接受数据分发消息
+				println("message")
+			}
+		}(c)
 	}()
 }

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/golang/protobuf/proto"
+	"fmt"
 	"net"
+	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 )
 
@@ -13,7 +14,7 @@ func main() {
 		return
 	}
 	conn,err:=net.DialTCP("tcp",nil,addr)
-	defer conn.Close()
+//	defer conn.Close()
 	if err!=nil{
 		return
 	}
@@ -21,9 +22,10 @@ func main() {
 		Username: "xiaonan",
 		Password: "123456",
 	}
-	data,err:=proto.Marshal(request)
+	data,err:=netmessage.PackageNetMessage(request)
 	if err!=nil{
 		return
 	}
+	fmt.Println(data)
 	conn.Write(data)
 }

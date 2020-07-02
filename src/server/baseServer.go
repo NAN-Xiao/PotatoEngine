@@ -30,10 +30,10 @@ func (this *BaseServer) Stop() {
 
 func (this *BaseServer) Run() {
 	//启动space
-	if !this.SpaceRun() {
-		fmt.Println("game server start space run is fail")
-		return
-	}
+	//if !this.SpaceRun() {
+	//	fmt.Println("game server start space run is fail")
+	//	return
+	//}
 	//启动监听
 	this.Conn.Listen()
 }
