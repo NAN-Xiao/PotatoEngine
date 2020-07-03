@@ -39,9 +39,9 @@ func (this *TcpConnect) Listen() {
 		}
 		println("new client")
 		this.conn=append(this.conn,c)
-
 		go func(conn *net.TCPConn) {
 			println("tcp listening")
+			defer conn.Close()
 			for {
 				var buf = make([]byte, 4)
 				n ,_:= io.ReadFull(conn,buf)
@@ -50,7 +50,12 @@ func (this *TcpConnect) Listen() {
 				}
 				len := binary.BigEndian.Uint32(buf)-4
 				buf = make([]byte, len)
-				n,_=io.ReadFull(conn,buf)
+				n,err:=io.ReadFull(conn,buf)
+				//超时关闭
+				if err!=io.EOF{
+					println(err)
+					break
+				}
 				if n<4{
 					continue
 				}
@@ -62,6 +67,7 @@ func (this *TcpConnect) Listen() {
 				//todo 接受数据分发消息
 				println("message")
 			}
+			println("conn close")
 		}(c)
 	}()
 }

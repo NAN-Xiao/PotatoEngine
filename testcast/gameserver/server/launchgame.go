@@ -1,6 +1,7 @@
 package main
 
 import (
+	"potatoengine/src/agent"
 	"potatoengine/src/connection"
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
@@ -23,14 +24,14 @@ func main() {
 		Conn: &connection.TcpConnect{},
 	}
 	//new space
-	//gatasp :=space.g GateSpace{struct {
-	//	SpaceID    int32
-	//	Spacename  string
-	//	Agents     map[uint32]*agent.Agent
-	//	Spacechanl chan netmessage.ServerMsgPackage
-	//}{SpaceID: 0, Spacename: "GateSpace", Agents: make(map[uint32]*agent.Agent), Spacechanl: make(chan netmessage.ServerMsgPackage)}}
-	//
-	//game.RegisterSpace(&gatasp)
+	gatasp :=GateSpace{struct {
+		SpaceID    int32
+		Spacename  string
+		Agents     map[uint32]*agent.Agent
+		Spacechanl chan netmessage.ServerMsgPackage
+	}{SpaceID: 0, Spacename: "GateSpace", Agents: make(map[uint32]*agent.Agent), Spacechanl: make(chan netmessage.ServerMsgPackage)}}
+
+	game.RegisterSpace(&gatasp)
 	game.Run()
 	println("game server started")
 	select{}
