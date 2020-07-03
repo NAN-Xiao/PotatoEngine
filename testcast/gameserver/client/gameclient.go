@@ -28,4 +28,5 @@ func main() {
 	}
 	fmt.Println(data)
 	conn.Write(data)
+	conn.Close()
 }

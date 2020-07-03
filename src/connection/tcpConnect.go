@@ -34,6 +34,7 @@ func (this *TcpConnect) Listen() {
 			return
 		}
 		lisener, err := net.ListenTCP("tcp", addr)
+<<<<<<< HEAD
 		for {
 			c, err := lisener.AcceptTCP()
 			if err != nil {
@@ -73,6 +74,44 @@ func (this *TcpConnect) Listen() {
 			}(c)
 		}
 
+=======
+		c, err := lisener.AcceptTCP()
+		if err!=nil{
+			return
+		}
+		println("new client")
+		this.conn=append(this.conn,c)
+		go func(conn *net.TCPConn) {
+			println("tcp listening")
+			defer conn.Close()
+			for {
+				var buf = make([]byte, 4)
+				n ,_:= io.ReadFull(conn,buf)
+				if n<4{
+					continue
+				}
+				len := binary.BigEndian.Uint32(buf)-4
+				buf = make([]byte, len)
+				n,err:=io.ReadFull(conn,buf)
+				//超时关闭
+				if err!=io.EOF{
+					println(err)
+					break
+				}
+				if n<4{
+					continue
+				}
+				id, obj := netmessage.UnPackNetMessage(buf)
+				if id < 0 || obj == nil {
+					//消息错误
+					continue
+				}
+				//todo 接受数据分发消息
+				println("message")
+			}
+			println("conn close")
+		}(c)
+>>>>>>> 14937661e88b33a2bde873b8d80cc7d9a9931e78
 	}()
 
 }

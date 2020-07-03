@@ -18,7 +18,7 @@ func main() {
 
 
 	login:=&server.BaseServer{
-		Spaces: make(map[string]space.ISpace),
+		SpacesMap: make(map[string]space.ISpace),
 		Name:   server.E_Loging,
 	}
 	//new space
