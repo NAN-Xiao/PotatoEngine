@@ -23,6 +23,8 @@ func (this *TcpConnect) Write(data []byte) {
 func (this *TcpConnect) Close() bool {
  return false
 }
+
+//整个server监听
 func (this *TcpConnect) Listen() {
 	go func() {
 		addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:9000")
@@ -52,9 +54,6 @@ func (this *TcpConnect) Listen() {
 				if n<4{
 					continue
 				}
-				//if err!=nil{
-				//	continue
-				//}
 				id, obj := netmessage.UnPackNetMessage(buf)
 				if id < 0 || obj == nil {
 					//消息错误
