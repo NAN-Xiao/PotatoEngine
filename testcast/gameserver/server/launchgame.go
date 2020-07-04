@@ -10,8 +10,10 @@ import (
 )
 
 func RegistServerInfo() {
-	netmessage.RegistePBNetMessage(&message.LoginResquest{})
-	netmessage.RegistePBNetMessage(&message.LoginResponse{})
+	//注册msg
+	netmessage.RegistePBNetMessage(&message.CheckToken{})
+	//注册msghandle
+	netmessage.RegistePBNetMessageHandl(&message.CheckTokenResult{}, CheckLoginToken)
 }
 
 func main() {

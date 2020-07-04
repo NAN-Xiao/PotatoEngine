@@ -13,6 +13,7 @@ message NetError
 {
   option (serverMsgID)=Msg_Error;
   EMsg_Error ErrorCode=1;
+  string Tip=2;
 }
 //登陆请求
 message LoginResquest

@@ -5,15 +5,15 @@ import (
 )
 
 type RedisDB struct {
-	_init     bool
-	_instance *redis.Client
+	_connected bool
+	_instance  *redis.Client
 }
 
 var redisinst *RedisDB
 
 //返回redis
 func (this *RedisDB) GetDB() (*redis.Client, error) {
-	if this._init == false || this._instance == nil {
+	if this._connected == false || this._instance == nil {
 		ConnectDB(this)
 	}
 	if _, err := this._instance.Ping().Result(); err != nil {
@@ -28,14 +28,14 @@ func ConnectDB(db *RedisDB) {
 		Password: "Xiaonan7147", // no password set
 		DB:       0,             //
 	})
-	db._init = true
+	db._connected = true
 }
 
 func GetRedisManager() *RedisDB {
 	if redisinst == nil {
 		redisinst = &RedisDB{
-			_init:     false,
-			_instance: nil,
+			_connected: false,
+			_instance:  nil,
 		}
 		ConnectDB(redisinst)
 	}
