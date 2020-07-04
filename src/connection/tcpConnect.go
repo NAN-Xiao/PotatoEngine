@@ -9,6 +9,7 @@ import (
 
 type TcpConnect struct {
 	conn []*net.TCPConn
+	Chan chan interface{}
 }
 
 func (this *TcpConnect) Read() (l int, err error) {
@@ -50,22 +51,19 @@ func (this *TcpConnect) Listen() {
 					if err == io.EOF {
 						break
 					}
-					if n < 4 {
-						continue
-					}
 					len := binary.BigEndian.Uint32(buf) - 4
 					buf = make([]byte, len)
-					n, _ = io.ReadFull(conn, buf)
-					if n < 4 {
-						continue
+					n, err = io.ReadFull(conn, buf)
+					if err == io.EOF || n < int(len) {
+						break
 					}
-					id, obj := netmessage.UnPackNetMessage(buf)
-					if id < 0 || obj == nil {
+					id, object := netmessage.UnPackNetMessage(buf)
+					if id < 0 || object == nil {
 						//消息错误
-						continue
+						break
 					}
-					//todo 接受数据分发消息
-					println("message")
+					//接受数据分发消息 放到chanel缓冲
+					this.Chan <- object
 				}
 				conn.Close()
 				println("CLose tcp con")

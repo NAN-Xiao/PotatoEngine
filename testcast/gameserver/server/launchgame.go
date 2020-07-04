@@ -20,11 +20,13 @@ func main() {
 	//new server
 	game := &server.BaseServer{
 		SpacesMap: make(map[string]space.ISpace),
-		Name:   server.E_Loging,
-		Conn: &connection.TcpConnect{},
+		Name:      server.E_Loging,
+		Conn: &connection.TcpConnect{
+			Chan: make(chan interface{}, 2),
+		},
 	}
 	//new space
-	gatasp :=GateSpace{struct {
+	gatasp := GateSpace{struct {
 		SpaceID    int32
 		Spacename  string
 		Agents     map[uint32]*agent.Agent
@@ -34,5 +36,5 @@ func main() {
 	game.RegisterSpace(&gatasp)
 	game.Run()
 	println("game server started")
-	select{}
+	select {}
 }
