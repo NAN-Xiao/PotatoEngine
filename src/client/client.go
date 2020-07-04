@@ -1,48 +1,29 @@
 package client
 
 import (
+	"potatoengine/src/agent"
 	"potatoengine/src/connection"
 	"potatoengine/src/netmessage"
 )
 
 type Client struct {
-	UserID   uint32
-	PlayerID uint32
-	_conn    *connection.TcpConnect
+	agent 	*agent.Agent
+	readChanel chan interface{}
+	writeChanel chan interface{}
+	_conn      connection.IConn
 }
-
-
-
-func (cl *Client) Send(msg *netmessage.ServerMsgPackage) {
-	if msg == nil {
-		return
+func (this *Client)WriteToChanle(msg interface){
+	writeChanel->msg
+}
+func(this *Client)ReadToChanle()interface{}{
+	return<-ReadChanel
+}
+func NewClient(conn connection.IConn) *Client {
+	client := &Client{
+		UserID:     0,
+		PlayerID:   0,
+		_conn:      conn,
+		Readchanel: make(chan interface{}, 128),
 	}
-	//cl._conn.WriteToChannel(*msg)
+	return client
 }
-
-///连接建立后开始循环读取写入派发消息
-//func (cl *Client) OnConnection() {
-//	go func() {
-//		for {
-//			cl._conn.ReadFormNet()
-//			cl._conn.WriteToNet()
-//			msg := cl._conn.ReadFromChannel()
-//			if &msg != nil {
-//				//dispatcher.DispatcherMessage(cl.UserID, cl.PlayerID, msg)
-//			}
-//		}
-//	}()
-//}
-
-//func NewClient(conn *net.TCPConn) *Client {
-//	_tconn := connection.NewTcpConnection(conn)
-//	if _tconn == nil {
-//		return nil
-//	}
-//	client := &Client{
-//		UserID:   0,
-//		PlayerID: 0,
-//		_conn:    _tconn,
-//	}
-//	return client
-//}

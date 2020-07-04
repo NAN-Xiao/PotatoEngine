@@ -4,12 +4,13 @@ import (
 	"encoding/binary"
 	"io"
 	"net"
+	"potatoengine/src/client"
 	"potatoengine/src/netmessage"
+	// "potatoengine/src/netmessage/pbmessage"
 )
 
 type TcpConnect struct {
-	conn []*net.TCPConn
-	Chan chan interface{}
+	Clients []client.Client
 }
 
 func (this *TcpConnect) Read() (l int, err error) {
@@ -41,8 +42,11 @@ func (this *TcpConnect) Listen() {
 				return
 			}
 			println("new client")
-			this.conn = append(this.conn, c)
-
+			if this.Clients==nil{
+				this.Clients=make([client.Client],0)
+			}
+			cl:=client.NewClient(c)
+			this.Clients=append this.Clients
 			go func(conn *net.TCPConn) {
 				println("tcp listening")
 				for {
@@ -62,8 +66,9 @@ func (this *TcpConnect) Listen() {
 						//消息错误
 						break
 					}
+					
 					//接受数据分发消息 放到chanel缓冲
-					this.Chan <- object
+					// this.Chan <- object
 				}
 				conn.Close()
 				println("CLose tcp con")

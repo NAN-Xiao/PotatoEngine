@@ -15,16 +15,13 @@ func RegistServerInfo() {
 	//注册msghandle
 	netmessage.RegistePBNetMessageHandl(&message.CheckTokenResult{}, CheckLoginToken)
 }
-
 func main() {
 	RegistServerInfo()
 	//new server
 	game := &server.BaseServer{
 		SpacesMap: make(map[string]space.ISpace),
 		Name:      server.E_Loging,
-		Conn: &connection.TcpConnect{
-			Chan: make(chan interface{}, 2),
-		},
+		Conn:      &connection.TcpConnect{},
 	}
 	//new space
 	gatasp := GateSpace{struct {
