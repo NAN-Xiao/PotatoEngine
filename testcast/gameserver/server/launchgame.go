@@ -10,7 +10,6 @@ import (
 )
 
 func RegistServerInfo() {
-
 	netmessage.RegistePBNetMessage(&message.LoginResquest{})
 	netmessage.RegistePBNetMessage(&message.LoginResponse{})
 }

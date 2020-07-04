@@ -21,15 +21,14 @@ func RegistDispathMap(id int32, f func(msgPackage *netmessage.MsgPackage)) {
 		return
 	}
 	Dispatch[id] = f
-
 }
 
 //从map得到对应消息处理函数并打包message进行处理
-func DispatcherMessage(uid int32,pid int32,msg *netmessage.MsgPackage) {
+func DispatcherMessage(uid int32, pid int32, msg *netmessage.MsgPackage) {
 	if Dispatch == nil {
 		return
 	}
-	id,_:= netmessage.GetServerMsgID(msg)
+	id, _ := netmessage.GetServerMsgID(msg)
 	if _, ok := Dispatch[id]; ok == false {
 
 		return
@@ -38,3 +37,7 @@ func DispatcherMessage(uid int32,pid int32,msg *netmessage.MsgPackage) {
 	fc := Dispatch[id]
 	fc(pkg)
 }
+
+func Dispatch(i interface{}{
+	
+})

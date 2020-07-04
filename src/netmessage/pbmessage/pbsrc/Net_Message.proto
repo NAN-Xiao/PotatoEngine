@@ -14,16 +14,31 @@ message NetError
   option (serverMsgID)=Msg_Error;
   EMsg_Error ErrorCode=1;
 }
+//登陆请求
 message LoginResquest
 {
   option (serverMsgID)=Msg_LoginRequest;
   string username=1;
   string password=2;
 }
-
+//登陆结果
 message LoginResponse
 {
   option (serverMsgID)=Msg_LoginResponse;
   int32 Userid=1;
   string Token=2;
+}
+//检查token
+message CheckToken
+{
+ option(serverMsgID)=Msg_LoginCheckToken;
+ int32 Userid=1;
+ string Token=2;
+
+}
+//返回token验证结果
+message CheckTokenResult
+{
+ option(serverMsgID)=Msg_LoginCheckTokenResult;
+ bool Result =1;
 }
