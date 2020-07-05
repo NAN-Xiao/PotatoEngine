@@ -57,7 +57,7 @@ func PackageNetMessage(m interface{}) ([]byte, error) {
 	buff = append(buff, msgdata...)
 	return buff, nil
 }
-//解压网络传送的数据（截取长度之后的数据）并以interface返回
+//解压网络传送的数据（截取长度之后的数据）并以interface返回pbmessage
 func UnPackNetMessage(data []byte) (int32,interface{}) {
 	i:=data[0:4]
 	id:=binary.BigEndian.Uint32(i)

@@ -1,22 +1,20 @@
 package agent
 
 import (
-	"potatoengine/src/client"
 	"potatoengine/src/netmessage"
 )
 
 type Agent struct {
 	//agent id
-	_playerID int32
-	//当前角色所在场景的id
+	_playerID   int32
 	_spaceID    int32
 	WriteChanel chan *netmessage.ServerMsgPackage
 	ReadChanel  chan *netmessage.ServerMsgPackage
 }
 
 //得到当前agnet的playerid
-func (this *Agent) GetPlayerID() uint32 {
-	return this._playerid
+func (this *Agent) GetPlayerID() int32 {
+	return this._playerID
 }
 
 func (this *Agent) WriteMessage(msgPackage *netmessage.ServerMsgPackage) {
@@ -42,7 +40,7 @@ func (this *Agent) OnLeaveSpace() {
 
 func NewAgent() *Agent {
 	ag := &Agent{
-		_playerid:   0,
+		_playerID:   0,
 		WriteChanel: make(chan *netmessage.ServerMsgPackage, 20),
 		ReadChanel:  make(chan *netmessage.ServerMsgPackage, 20),
 	}

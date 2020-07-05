@@ -10,7 +10,7 @@ import (
 )
 
 type TcpConnect struct {
-	Clients [] *client.Client
+	Clients []*client.Client
 }
 
 func (this *TcpConnect) Read() (l int, err error) {
@@ -42,11 +42,11 @@ func (this *TcpConnect) Listen() {
 				return
 			}
 			println("new client")
-			if this.Clients==nil{
-				this.Clients=make([]*client.Client,0)
+			if this.Clients == nil {
+				this.Clients = make([]*client.Client, 0)
 			}
-			cl:=client.NewClient(c)
-			this.Clients= append(this.Clients,cl)
+			cl := client.NewClient(c)
+			this.Clients = append v  (this.Clients, cl)
 			go func(conn *net.TCPConn) {
 				println("tcp listening")
 				for {
@@ -61,14 +61,20 @@ func (this *TcpConnect) Listen() {
 					if err == io.EOF || n < int(len) {
 						break
 					}
-					id, object := netmessage.UnPackNetMessage(buf)
-					if id < 0 || object == nil {
+					id, msg := netmessage.UnPackNetMessage(buf)
+					if id < 0 || msg == nil {
 						//消息错误
 						break
 					}
-					
-					//接受数据分发消息 放到chanel缓冲
-					// this.Chan <- object
+					cl.WriteToChanle(msg)
+				}
+				//移除持有的client 断开client的连接
+				for i := 0; i > len(this.Clients); i++ {
+					if this.Clients[i] == cl {
+						head := this.Clients[:i]
+						this.Clients = append(head, this.Clients[i+1:]...)
+						break
+					}
 				}
 				conn.Close()
 				println("CLose tcp con")
