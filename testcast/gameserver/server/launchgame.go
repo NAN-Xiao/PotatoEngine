@@ -17,8 +17,7 @@ func RegistServerInfo() {
 func main() {
 	RegistServerInfo()
 	//new space
-	game:=server.NewServer(server.E_Game,connection.ETcp)
-
+	game := server.NewServer(server.E_Game, connection.ETcp)
 	gatasp := GateSpace{struct {
 		SpaceID    int32
 		Spacename  string

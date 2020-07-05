@@ -41,6 +41,7 @@ func (this *Agent) OnLeaveSpace() {
 func NewAgent() *Agent {
 	ag := &Agent{
 		_playerID:   0,
+		_spaceID:    0,
 		WriteChanel: make(chan *netmessage.ServerMsgPackage, 20),
 		ReadChanel:  make(chan *netmessage.ServerMsgPackage, 20),
 	}
