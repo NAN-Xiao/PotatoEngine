@@ -4,6 +4,7 @@ import (
 	"net"
 	"potatoengine/src/agent"
 	"potatoengine/src/dispatcher"
+	"potatoengine/src/netmessage"
 )
 
 type Client struct {
@@ -26,7 +27,11 @@ func (this *Client) DispatchMsg() {
 		if ok == false {
 			continue
 		}
-		this.dispatch.Dispach(m)
+		msg := netmessage.PackMessagePackage(this.UID, this.Agent.GetPlayerID(), m)
+		if msg == nil {
+			continue
+		}
+		this.dispatch.Dispatch(msg)
 	}
 }
 
