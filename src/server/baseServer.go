@@ -7,9 +7,9 @@ import (
 )
 
 type BaseServer struct {
-	Conn   connection.IConn
+	Conn      connection.IConn
 	SpacesMap map[string]space.ISpace
-	Name   E_ServerNames
+	Name      E_ServerNames
 }
 
 func (this *BaseServer) RegisterSpace(sp space.ISpace) {
@@ -53,3 +53,17 @@ func (this *BaseServer) SpaceRun() bool {
 	return true
 }
 
+func NewServer(srname E_ServerNames, connType connection.ConnType) *BaseServer {
+	sr := &BaseServer{
+		SpacesMap: make(map[string]space.ISpace),
+		Name:      E_Game,
+	}
+	if connType == connection.ETcp {
+		sr.Conn = &connection.TcpConnect{}
+
+	}
+	if  connType == connection.EHttp {
+		sr.Conn = &connection.HttpConnect{}
+	}
+	return sr
+}

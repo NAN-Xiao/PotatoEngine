@@ -10,7 +10,7 @@ import (
 )
 
 type TcpConnect struct {
-	Clients []client.Client
+	Clients [] *client.Client
 }
 
 func (this *TcpConnect) Read() (l int, err error) {
@@ -43,10 +43,10 @@ func (this *TcpConnect) Listen() {
 			}
 			println("new client")
 			if this.Clients==nil{
-				this.Clients=make([client.Client],0)
+				this.Clients=make([]*client.Client,0)
 			}
 			cl:=client.NewClient(c)
-			this.Clients=append this.Clients
+			this.Clients= append(this.Clients,cl)
 			go func(conn *net.TCPConn) {
 				println("tcp listening")
 				for {

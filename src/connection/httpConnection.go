@@ -3,7 +3,7 @@ package connection
 type HttpConnect struct {
 }
 
-func (this *HttpConnect) Read() {
+func (this *HttpConnect) Read()(l int,err error) {
 
 }
 func (this *HttpConnect) Write(data []byte) {

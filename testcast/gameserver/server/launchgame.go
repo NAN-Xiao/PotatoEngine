@@ -6,7 +6,6 @@ import (
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/server"
-	"potatoengine/src/space"
 )
 
 func RegistServerInfo() {
@@ -17,13 +16,9 @@ func RegistServerInfo() {
 }
 func main() {
 	RegistServerInfo()
-	//new server
-	game := &server.BaseServer{
-		SpacesMap: make(map[string]space.ISpace),
-		Name:      server.E_Loging,
-		Conn:      &connection.TcpConnect{},
-	}
 	//new space
+	game:=server.NewServer(server.E_Game,connection.ETcp)
+
 	gatasp := GateSpace{struct {
 		SpaceID    int32
 		Spacename  string

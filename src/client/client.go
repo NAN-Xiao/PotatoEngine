@@ -1,29 +1,30 @@
 package client
 
 import (
+	"net"
 	"potatoengine/src/agent"
-	"potatoengine/src/connection"
-	"potatoengine/src/netmessage"
+	"potatoengine/src/dispatcher"
 )
 
 type Client struct {
 	agent 	*agent.Agent
-	readChanel chan interface{}
-	writeChanel chan interface{}
-	_conn      connection.IConn
+	dispatch *dispatcher.Dispatcher
+	ReadChanel chan interface{}
+	WriteChanel chan interface{}
+	_conn      net.Conn
 }
-func (this *Client)WriteToChanle(msg interface){
-	writeChanel->msg
+func (this *Client)WriteToChanle(msg interface{}){
+	this.WriteChanel<-msg
 }
 func(this *Client)ReadToChanle()interface{}{
-	return<-ReadChanel
+	return<-this.ReadChanel
 }
-func NewClient(conn connection.IConn) *Client {
+func NewClient(conn net.Conn) *Client {
 	client := &Client{
-		UserID:     0,
-		PlayerID:   0,
+		dispatch: &dispatcher.Dispatcher{},
 		_conn:      conn,
-		Readchanel: make(chan interface{}, 128),
+		ReadChanel: make(chan interface{}, 128),
+		WriteChanel: make(chan interface{}),
 	}
 	return client
 }
