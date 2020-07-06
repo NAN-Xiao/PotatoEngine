@@ -10,14 +10,11 @@ type Dispatcher struct {
 var Dispatch map[int32]func(pk *netmessage.ServerMsgPackage)
 
 //从map得到对应消息处理函数并打包message进行处理
-func (this *Dispatcher) Dispatch(msg *netmessage.ServerMsgPackage) {
-
-	id, _ := netmessage.GetServerMsgID(msg)
-	if _, ok := Dispatch[id]; ok == false {
-
+func (this *Dispatcher) Dispatch(m *netmessage.ServerMsgPackage) {
+	mid, err := netmessage.GetServerMsgID(m.Msg)
+	if err != nil {
 		return
 	}
-	pkg := netmessage.PackMessagePackage(uid, pid, *msg)
-	fc := Dispatch[id]
-	fc(pkg)
+	fn := netmessage.GetProcessFuction(mid)
+	fn(m)
 }

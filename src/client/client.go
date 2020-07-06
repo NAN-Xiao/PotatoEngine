@@ -17,6 +17,7 @@ type Client struct {
 }
 
 func (this *Client) WriteToChanle(msg interface{}) {
+
 	this.MsgChanel <- msg
 }
 
@@ -27,7 +28,11 @@ func (this *Client) DispatchMsg() {
 		if ok == false {
 			continue
 		}
-		msg := netmessage.PackMessagePackage(this.UID, this.Agent.GetPlayerID(), m)
+		var pid int32 = 0
+		if this.Agent != nil {
+			pid = this.Agent.GetPlayerID()
+		}
+		msg := netmessage.PackMessagePackage(this.UID, pid, m)
 		if msg == nil {
 			continue
 		}

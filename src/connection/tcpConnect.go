@@ -47,7 +47,7 @@ func (this *TcpConnect) Listen() {
 			// }
 			cl := client.NewClient(c)
 			//this.Clients = append(this.Clients, cl)
-			go func(conn *net.TCPConn) {
+			go func(conn *net.TCPConn, client *client.Client) {
 				println("tcp listening")
 				for {
 					var buf = make([]byte, 4)
@@ -73,7 +73,7 @@ func (this *TcpConnect) Listen() {
 				conn = nil
 				cl = nil
 				println("CLose tcp con")
-			}(c)
+			}(c, cl)
 		}
 
 	}()
