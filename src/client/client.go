@@ -2,6 +2,7 @@ package client
 
 import (
 	"net"
+	"potatoengine/src/account"
 	"potatoengine/src/agent"
 	"potatoengine/src/dispatcher"
 	"potatoengine/src/netmessage"
@@ -9,10 +10,11 @@ import (
 
 type Client struct {
 	UID      int32
-	Agent    *agent.Agent
 	dispatch *dispatcher.Dispatcher
 	// ReadChanel  chan interface{}
 	MsgChanel chan interface{}
+	Account *account.Account
+	Agent    *agent.Agent
 	_conn     net.Conn
 }
 

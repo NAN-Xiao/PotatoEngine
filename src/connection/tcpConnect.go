@@ -46,6 +46,7 @@ func (this *TcpConnect) Listen() {
 			// 	this.Clients = make([]*client.Client, 0)
 			// }
 			cl := client.NewClient(c)
+			cl.Account=n
 			//this.Clients = append(this.Clients, cl)
 			go func(conn *net.TCPConn, client *client.Client) {
 				println("tcp listening")
