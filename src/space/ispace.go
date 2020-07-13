@@ -8,4 +8,5 @@ type ISpace interface {
 	GetID() int32
 	LeaveSpace(ag *agent.Agent)
 	EnterSpace(ag *agent.Agent)
+	Tick()
 }

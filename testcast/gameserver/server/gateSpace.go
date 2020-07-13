@@ -25,3 +25,6 @@ func (this *GateSpace) LeaveSpace(ag *agent.Agent) {
 func (this *GateSpace) EnterSpace(ag *agent.Agent) {
 
 }
+func (this *GateSpace)Tick()  {
+	println("gate space tick")
+}

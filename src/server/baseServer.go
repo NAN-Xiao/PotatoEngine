@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"potatoengine/src/connection"
 	"potatoengine/src/space"
+	"time"
 )
 
 type BaseServer struct {
 	Conn      connection.IConn
 	SpacesMap map[string]space.ISpace
 	Name      E_ServerNames
+	tick      *time.Ticker
+	tickfn    []func()
 }
 
 func (this *BaseServer) RegisterSpace(sp space.ISpace) {
@@ -22,7 +25,9 @@ func (this *BaseServer) RegisterSpace(sp space.ISpace) {
 		fmt.Printf("have current space::%s \n", name)
 		return
 	}
+
 	this.SpacesMap[name] = sp
+	this.tickfn = append(this.tickfn, sp.Tick)
 	fmt.Printf("RegisterSpace::%s \n", name)
 }
 func (this *BaseServer) Stop() {
@@ -62,8 +67,28 @@ func NewServer(srname E_ServerNames, connType connection.ConnType) *BaseServer {
 		sr.Conn = &connection.TcpConnect{}
 
 	}
-	if  connType == connection.EHttp {
+	if connType == connection.EHttp {
 		sr.Conn = &connection.HttpConnect{}
 	}
+	sr.tick = time.NewTicker(time.Second/2)
+	sr.tickfn = make([]func(), 0)
+	//启动tick的携程
+	go func() {
+		//println("start tick")
+		for {
+			select {
+			case <-sr.tick.C:
+				ln:=len(sr.tickfn)
+				if ln<=0{
+					continue
+				}
+				for i := 0; i < ln; i++ {
+					fn := sr.tickfn[i]
+					fn()
+				}
+			}
+		}
+	}()
+
 	return sr
 }

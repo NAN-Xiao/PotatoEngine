@@ -53,3 +53,6 @@ func (this *LoginSpace) EnterSpace(ag *agent.Agent) {
 func (this *LoginSpace) GetName() string {
 	return this.Spacename
 }
+func (this *LoginSpace)Tick()  {
+
+}
