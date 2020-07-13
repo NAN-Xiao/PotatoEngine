@@ -39,7 +39,27 @@ func (this *BaseServer) Run() {
 	//	fmt.Println("game server start space run is fail")
 	//	return
 	//}
+
+	//todo 启动tick的携程 这里开启了新的线程来更新tick，主要目的是全局唯一的tick
+	//以后希望能和space的tick放到一起。
+	go func() {
+		//println("start tick")
+		for {
+			select {
+			case <-this.tick.C:
+				ln := len(this.tickfn)
+				if ln <= 0 {
+					continue
+				}
+				for i := 0; i < ln; i++ {
+					fn := this.tickfn[i]
+					fn()
+				}
+			}
+		}
+	}()
 	//启动监听
+
 	this.Conn.Listen()
 }
 func (this *BaseServer) SpaceRun() bool {
@@ -70,25 +90,8 @@ func NewServer(srname E_ServerNames, connType connection.ConnType) *BaseServer {
 	if connType == connection.EHttp {
 		sr.Conn = &connection.HttpConnect{}
 	}
-	sr.tick = time.NewTicker(time.Second/2)
+	sr.tick = time.NewTicker(time.Second / 2)
 	sr.tickfn = make([]func(), 0)
-	//启动tick的携程
-	go func() {
-		//println("start tick")
-		for {
-			select {
-			case <-sr.tick.C:
-				ln:=len(sr.tickfn)
-				if ln<=0{
-					continue
-				}
-				for i := 0; i < ln; i++ {
-					fn := sr.tickfn[i]
-					fn()
-				}
-			}
-		}
-	}()
 
 	return sr
 }
