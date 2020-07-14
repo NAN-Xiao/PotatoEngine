@@ -66,7 +66,7 @@ func (this *TcpConnect) Listen() {
 						//消息错误
 						break
 					}
-					cl.WriteToChanle(msg)
+					cl.Recevie(msg)
 				}
 				//移除持有的client 断开client的连接
 				conn.Close()

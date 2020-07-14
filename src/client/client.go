@@ -11,26 +11,27 @@ import (
 type Client struct {
 	UID      int32
 	dispatch *dispatcher.Dispatcher
-	// ReadChanel  chan interface{}
-	MsgChanel  chan interface{}
-	SendChanel chan interface{}
+	RecevieChan  chan interface{}
+	SendChan chan interface{}
 	Account    *account.Account
 	Agent      *agent.Agent
 	_conn      net.Conn
 }
+//接受断言好的消息
+func (this *Client) Recevie(msg interface{}) {
 
-func (this *Client) WriteToChanle(msg interface{}) {
-
-	this.MsgChanel <- msg
+	this.RecevieChan <- msg
 }
-func (this *Client) ReadFromChannel() {
-
+func (this *Client)Send(msg interface{})  {
+	if msg==nil||this.SendChan==nil{
+		return
+	}
+	this.SendChan<-msg
 }
-
 //派发消息
 func (this *Client) DispatchMsg() {
 	for {
-		m, ok := <-this.MsgChanel
+		m, ok := <-this.RecevieChan
 		if ok == false {
 			continue
 		}
@@ -51,7 +52,7 @@ func (this *Client) SendToNet()  {
 		return
 	}
 	for {
-		if m, ok := <-this.SendChanel; ok == true {
+		if m, ok := <-this.SendChan; ok == true {
 			data, err := netmessage.PackageNetMessage(m)
 			if err == nil {
 				this._conn.Write(data)
@@ -59,7 +60,6 @@ func (this *Client) SendToNet()  {
 		} else {
 			break
 		}
-
 	}
 }
 func NewClient(conn net.Conn) *Client {
@@ -67,8 +67,8 @@ func NewClient(conn net.Conn) *Client {
 		UID:        0,
 		dispatch:   &dispatcher.Dispatcher{},
 		_conn:      conn,
-		MsgChanel:  make(chan interface{}, 128),
-		SendChanel: make(chan interface{}, 128),
+		RecevieChan:  make(chan interface{}, 128),
+		SendChan: make(chan interface{}, 128),
 	}
 	go client.DispatchMsg()
 	return client
