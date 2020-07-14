@@ -12,15 +12,19 @@ type Client struct {
 	UID      int32
 	dispatch *dispatcher.Dispatcher
 	// ReadChanel  chan interface{}
-	MsgChanel chan interface{}
-	Account *account.Account
-	Agent    *agent.Agent
-	_conn     net.Conn
+	MsgChanel  chan interface{}
+	SendChanel chan interface{}
+	Account    *account.Account
+	Agent      *agent.Agent
+	_conn      net.Conn
 }
 
 func (this *Client) WriteToChanle(msg interface{}) {
 
 	this.MsgChanel <- msg
+}
+func (this *Client) ReadFromChannel() {
+
 }
 
 //派发消息
@@ -41,13 +45,30 @@ func (this *Client) DispatchMsg() {
 		this.dispatch.Dispatch(msg)
 	}
 }
+//发送网络端消息到客户端
+func (this *Client) SendToNet()  {
+	if this._conn == nil {
+		return
+	}
+	for {
+		if m, ok := <-this.SendChanel; ok == true {
+			data, err := netmessage.PackageNetMessage(m)
+			if err == nil {
+				this._conn.Write(data)
+			}
+		} else {
+			break
+		}
 
+	}
+}
 func NewClient(conn net.Conn) *Client {
 	client := &Client{
-		UID:       0,
-		dispatch:  &dispatcher.Dispatcher{},
-		_conn:     conn,
-		MsgChanel: make(chan interface{}, 128),
+		UID:        0,
+		dispatch:   &dispatcher.Dispatcher{},
+		_conn:      conn,
+		MsgChanel:  make(chan interface{}, 128),
+		SendChanel: make(chan interface{}, 128),
 	}
 	go client.DispatchMsg()
 	return client
