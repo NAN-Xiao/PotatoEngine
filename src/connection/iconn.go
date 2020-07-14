@@ -2,8 +2,9 @@ package connection
 
 type IConn interface {
 	//SendMessage(msg netmessage.ServerMsgPackage)
-	Read()(l int,err error)
+	Receive() error
+	ReadMsg() interface{}
+	GetMsgQue() chan interface{}
 	Write(data []byte)
 	Close() bool
-	Listen()
 }

@@ -2,17 +2,18 @@ package server
 
 import (
 	"fmt"
+	"net"
+	"potatoengine/src/client"
 	"potatoengine/src/connection"
+	"potatoengine/src/globleTimer"
 	"potatoengine/src/space"
-	"time"
 )
 
 type BaseServer struct {
-	Conn      connection.IConn
+	AllClient client.ClientMap
 	SpacesMap map[string]space.ISpace
+	ConType   connection.ConnType
 	Name      E_ServerNames
-	tick      *time.Ticker
-	tickfn    []func()
 }
 
 func (this *BaseServer) RegisterSpace(sp space.ISpace) {
@@ -27,41 +28,52 @@ func (this *BaseServer) RegisterSpace(sp space.ISpace) {
 	}
 
 	this.SpacesMap[name] = sp
-	this.tickfn = append(this.tickfn, sp.Tick)
 	fmt.Printf("RegisterSpace::%s \n", name)
 }
 func (this *BaseServer) Stop() {
+	//todo 断开所有的客户端链接 卸载所有的space
 }
 
+//启动服务器
 func (this *BaseServer) Run() {
-	//启动space
-	//if !this.SpaceRun() {
-	//	fmt.Println("game server start space run is fail")
-	//	return
-	//}
-
 	//todo 启动tick的携程 这里开启了新的线程来更新tick，主要目的是全局唯一的tick
-	//以后希望能和space的tick放到一起。
-	go func() {
-		//println("start tick")
-		for {
-			select {
-			case <-this.tick.C:
-				ln := len(this.tickfn)
-				if ln <= 0 {
-					continue
-				}
-				for i := 0; i < ln; i++ {
-					fn := this.tickfn[i]
-					fn()
-				}
-			}
-		}
-	}()
-	//启动监听
-
-	this.Conn.Listen()
+	globleTimer.Tick()
+	//启动监听 top｜http
+	if this.ConType == connection.ETcp {
+		go this.ListenTcp()
+	} else {
+		go this.ListenHttp()
+	}
 }
+
+//监听tcp
+func (this *BaseServer) ListenTcp() {
+	addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:9000")
+	if err != nil {
+		println(err)
+		return
+	}
+	lisener, err := net.ListenTCP("tcp", addr)
+	//阻塞监听。当有链接创建tcp链接客户端 并添加到服务器持有到客户端链接队列
+	for {
+		c, err := lisener.AcceptTCP()
+		if err != nil {
+			println(err)
+			return
+		}
+		con := &connection.TcpConnect{
+			Conn:    c,
+			MsgChan: make(chan interface{}, 128),
+		}
+		this.AllClient.AddClient(con)
+	}
+}
+
+//todo 监听http
+func (this *BaseServer) ListenHttp() {
+
+}
+
 func (this *BaseServer) SpaceRun() bool {
 	if this.SpacesMap == nil || len(this.SpacesMap) <= 0 {
 		fmt.Printf("this server have any space ::%d \n", len(this.SpacesMap))
@@ -81,17 +93,12 @@ func (this *BaseServer) SpaceRun() bool {
 func NewServer(srname E_ServerNames, connType connection.ConnType) *BaseServer {
 	sr := &BaseServer{
 		SpacesMap: make(map[string]space.ISpace),
-		Name:      E_Game,
+		Name:      srname,
+		ConType:   connType,
+		AllClient: client.ClientMap{
+			Clients:     make([]client.Client, 0),
+			ClientIndex: 0,
+		},
 	}
-	if connType == connection.ETcp {
-		sr.Conn = &connection.TcpConnect{}
-
-	}
-	if connType == connection.EHttp {
-		sr.Conn = &connection.HttpConnect{}
-	}
-	sr.tick = time.NewTicker(time.Second / 2)
-	sr.tickfn = make([]func(), 0)
-
 	return sr
 }
