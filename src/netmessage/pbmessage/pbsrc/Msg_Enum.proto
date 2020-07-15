@@ -6,12 +6,17 @@ option  go_package="ProtoEngine/src/message";
   enum ServerMsg_ID
   {
     Msg_Error=0;
-    //longin消息
-    Msg_LoginRequest            =10001;//登陆请求
-    Msg_LoginResponse           =10002;//登陆返回
-    Msg_LoginRegist             =10003;//注册请求
+    //longin消息10000到20000都是登录验证等和account相关消息
+    Msg_LoginRequest            =10001;//http登陆请求
+    Msg_LoginResponse           =10002;//http登陆返回
+    Msg_LoginRegist             =10003;//http注册请求
+
     Msg_LoginCheckToken         =10004;//验证token登陆
-    Msg_LoginCheckTokenResult   =10005;//验证token结果
+    Msg_LoginCheckTokenResult   =10005;//验证token结果 包括账号角色的推送结果
+    //20000到30000 聊天服务相关
+    Msg_ChatRequest             =20001;//发送聊天
+    Msg_ChatResponse            =20002;//聊天请求
+    //
   }
 
 enum EMsg_Error

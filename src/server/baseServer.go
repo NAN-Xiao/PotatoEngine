@@ -46,7 +46,7 @@ func (this *BaseServer) Run() {
 	}
 }
 
-//监听tcp
+//阻塞监听tcp。当有链接创建tcp链接客户端 并添加到服务器持有到客户端链接队列
 func (this *BaseServer) ListenTcp() {
 	addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:9000")
 	if err != nil {
@@ -54,7 +54,7 @@ func (this *BaseServer) ListenTcp() {
 		return
 	}
 	lisener, err := net.ListenTCP("tcp", addr)
-	//阻塞监听。当有链接创建tcp链接客户端 并添加到服务器持有到客户端链接队列
+
 	for {
 		c, err := lisener.AcceptTCP()
 		if err != nil {
@@ -65,7 +65,14 @@ func (this *BaseServer) ListenTcp() {
 			Conn:    c,
 			MsgChan: make(chan interface{}, 128),
 		}
-		this.AllClient.AddClient(con)
+		cl:=client.Client{
+			SendChan:    make(chan interface{},128),
+			Account:     nil,
+			Agent:       nil,
+			Conn: con,
+		}
+		this.AllClient.AddClient(cl)
+		cl.Recevie()
 	}
 }
 

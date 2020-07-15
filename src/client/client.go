@@ -39,6 +39,16 @@ func (this *Client) DisPatchMsg() {
 		msg, ok := <-que
 		if ok {
 			//todo
+			id,err:=netmessage.GetServerMsgID(msg)
+			if err!=nil{
+				continue
+			}
+			//登录相关消息
+			if id>10000&&id<20000{
+				
+			}else if id>20000&&id<30000 {
+
+			}
 		}
 	}
 }

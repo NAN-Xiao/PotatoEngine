@@ -1,27 +1,17 @@
 package client
 
-import (
-	"potatoengine/src/connection"
-)
-
 type ClientMap struct {
 	Clients []Client
 	ClientIndex int32
 }
-func (this *ClientMap)AddClient(conn connection.IConn)  {
+//添加一个客户端到全局
+func (this *ClientMap)AddClient(cl Client)  {
 	this.ClientIndex+=1
-	cl:=Client{
-		ClientID:    this.ClientIndex,
-		//RecevieChan: make(chan interface{},128),
-		SendChan:    make(chan interface{},128),
-		Account:     nil,
-		Agent:       nil,
-		Conn: conn,
-	}
+	cl.ClientID=this.ClientIndex
 	this.Clients = append(this.Clients, cl)
-	cl.Recevie()
+
 }
-//删除客户端
+//从全局删除客户端
 func (this *ClientMap)RemoveClient(cl Client)  {
 	if this.Clients==nil|| len(this.Clients)<=0{
 		return
