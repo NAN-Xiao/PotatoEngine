@@ -23,5 +23,5 @@ func RemoveServer(sr server.BaseServer) {
 			return
 		}
 	}
-	println("remve ser fail")
+	println("remove ser fail")
 }
