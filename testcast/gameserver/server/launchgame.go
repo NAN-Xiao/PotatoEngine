@@ -3,6 +3,7 @@ package main
 import (
 	"potatoengine/src/agent"
 	"potatoengine/src/connection"
+	"potatoengine/src/engine"
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/server"
@@ -26,7 +27,10 @@ func main() {
 	}{SpaceID: 0, Spacename: "GateSpace", Agents: make(map[uint32]*agent.Agent), Spacechanl: make(chan netmessage.ServerMsgPackage)}}
 
 	game.RegisterSpace(&gatasp)
-	game.Run()
+
+
+	engine.AddServer(game)
+	engine.Start()
 	println("game server started")
 	select {}
 }

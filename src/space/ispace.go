@@ -9,4 +9,5 @@ type ISpace interface {
 	LeaveSpace(ag *agent.Agent)
 	EnterSpace(ag *agent.Agent)
 	Tick()
+	//RegistHandle(interface{},func())
 }
