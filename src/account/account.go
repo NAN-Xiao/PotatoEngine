@@ -3,27 +3,29 @@ package account
 import (
 	"fmt"
 	"potatoengine/src/client"
-	"potatoengine/src/entity"
 )
 
 type Account struct {
-	MsgChannel chan interface{}
 	Longin bool
-
-	Entity  entity.Entity
+	Client  *client.Client
 }
-//从account读消息
-func (this *Account) ReadMsg() (interface{}, error) {
 
-	msg := <-this.MsgChannel
-	if msg != nil {
-		return msg, nil
-	}
-	return nil, fmt.Errorf("msg channel is nil")
+
+
+func (this *Account) GetEntityID() int32 {
+	return this._entityID
 }
-//往account写消息
-func (this *Account) WriteMsg(msg interface{}) {
-	this.MsgChannel <- msg
+func (this *Account) GetSpaceID() int32 {
+	return this._spaceID
+}
+//进入场景
+func (this *Account) EnterSpace(spaceID int32) {
+
+}
+
+//退出场景
+func (this *Account) LeaveSpace(spaceID int32) {
+
 }
 
 func NewAccount(cl *client.Client) *Account {
