@@ -43,3 +43,9 @@ message CheckTokenResult
  option(serverMsgID)=Msg_LoginCheckTokenResult;
  bool Result =1;
 }
+//推送角色信息
+message PushAvatarList
+{
+
+}
+

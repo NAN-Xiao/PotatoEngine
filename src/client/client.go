@@ -1,8 +1,6 @@
 package client
 
 import (
-	"potatoengine/src/account"
-	"potatoengine/src/agent"
 	"potatoengine/src/connection"
 	"potatoengine/src/netmessage"
 )
@@ -10,8 +8,6 @@ import (
 type Client struct {
 	ClientID int32
 	SendChan chan interface{}
-	Account  *account.Account
-	Agent    *agent.Agent
 	Conn     connection.IConn
 }
 

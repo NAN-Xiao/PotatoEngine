@@ -17,8 +17,19 @@ func RegistServerInfo() {
 }
 func main() {
 	RegistServerInfo()
-	//new space
-	game := server.NewServer(server.E_Game, connection.ETcp)
+
+	//创建gateserver添加全局
+	gate:=GateServer()
+	engine.AddServer(gate)
+	engine.Start()
+	println("game server started")
+	select {}
+	println("engine out")
+}
+
+//创建gateserver
+func GateServer() *server.BaseServer {
+	gate := server.NewServer(server.E_Game, connection.ETcp)
 	gatasp := GateSpace{struct {
 		SpaceID    int32
 		Spacename  string
@@ -26,11 +37,6 @@ func main() {
 		Spacechanl chan netmessage.ServerMsgPackage
 	}{SpaceID: 0, Spacename: "GateSpace", Agents: make(map[uint32]*agent.Agent), Spacechanl: make(chan netmessage.ServerMsgPackage)}}
 
-	game.RegisterSpace(&gatasp)
-
-
-	engine.AddServer(game)
-	engine.Start()
-	println("game server started")
-	select {}
+	gate.RegisterSpace(&gatasp)
+	return gate
 }

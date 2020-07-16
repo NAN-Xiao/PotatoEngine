@@ -3,11 +3,14 @@ package account
 import (
 	"fmt"
 	"potatoengine/src/client"
+	"potatoengine/src/entity"
 )
 
 type Account struct {
-	Client     *client.Client
 	MsgChannel chan interface{}
+	Longin bool
+
+	Entity  entity.Entity
 }
 //从account读消息
 func (this *Account) ReadMsg() (interface{}, error) {

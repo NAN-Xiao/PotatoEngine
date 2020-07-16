@@ -1,0 +1,16 @@
+syntax = "proto3";
+package Msg;
+option  go_package="ProtoEngine/src/message";
+import "google/protobuf/descriptor.proto";
+
+message Avatar
+{
+  int32 AvatarID =1;
+  AvatarItems Items =2;
+}
+message AvatarItems
+{
+  int32 Head=1;
+  int32 Body=2;
+  int32  weapons=3;
+}

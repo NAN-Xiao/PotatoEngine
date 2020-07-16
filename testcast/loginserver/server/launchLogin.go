@@ -11,7 +11,7 @@ func RegistServerInfo()  {
 	//注册消息
 	netmessage.RegistePBNetMessage(&message.LoginResquest{})
 
-	
+
 	//注册消息处理句柄
 	netmessage.RegistePBNetMessageHandl(&message.LoginResquest{},ProcessLoginRequest)
 }

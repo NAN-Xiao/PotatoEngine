@@ -1,15 +1,17 @@
 package agent
 
 import (
+	"potatoengine/src/entity"
 	"potatoengine/src/netmessage"
 )
 
 type Agent struct {
-	//agent id
 	_playerID   int32
 	_spaceID    int32
 	WriteChanel chan *netmessage.ServerMsgPackage
 	ReadChanel  chan *netmessage.ServerMsgPackage
+
+	Entity entity.Entity
 }
 
 //得到当前agnet的playerid
