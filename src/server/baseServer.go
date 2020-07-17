@@ -10,7 +10,6 @@ import (
 )
 
 type BaseServer struct {
-	AllClient client.ClientMap
 	SpacesMap map[string]space.ISpace
 	ConType   connection.ConnType
 	Name      E_ServerNames
@@ -63,15 +62,15 @@ func (this *BaseServer) ListenTcp() {
 		}
 		con := &connection.TcpConnect{
 			Conn:    c,
-			MsgChan: make(chan interface{}, 128),
+			ReceiveChan: make(chan interface{}, 128),
 		}
-		cl:=client.Client{
+		cl:=&client.Client{
 			SendChan:    make(chan interface{},128),
 			Account:     nil,
 			Agent:       nil,
 			Conn: con,
 		}
-		this.AllClient.AddClient(cl)
+		client.AddClient(cl)
 		cl.Recevie()
 	}
 }

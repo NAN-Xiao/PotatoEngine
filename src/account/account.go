@@ -1,28 +1,31 @@
 package account
 
 import (
-	"fmt"
 	"potatoengine/src/client"
+	"potatoengine/src/entity"
+	"potatoengine/src/space"
 )
 
 type Account struct {
+	Entity entity.Entity
 	Longin bool
-	Client  *client.Client
 }
 
 
 
 func (this *Account) GetEntityID() int32 {
-	return this._entityID
+	return this.Entity.GetEntityID()
 }
 func (this *Account) GetSpaceID() int32 {
-	return this._spaceID
+	return this.GetSpaceID()
 }
 //进入场景
 func (this *Account) EnterSpace(spaceID int32) {
-
+	space:=space.GetSpace(spaceID)
+	if space==nil{
+		return
+	}
 }
-
 //退出场景
 func (this *Account) LeaveSpace(spaceID int32) {
 

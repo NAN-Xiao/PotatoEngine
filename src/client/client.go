@@ -1,14 +1,20 @@
 package client
 
 import (
+	"fmt"
+	"potatoengine/src/account"
+	"potatoengine/src/agent"
 	"potatoengine/src/connection"
+	"potatoengine/src/logService"
 	"potatoengine/src/netmessage"
 )
 
 type Client struct {
-	ClientID int32
+	ConnID int32
 	SendChan chan interface{}
 	Conn     connection.IConn
+	Account  *account.Account
+	Agent    agent.Agent
 }
 
 //接受断言好的消息 写入
@@ -17,12 +23,12 @@ func (this *Client) Recevie() {
 		return
 	}
 	go this.Conn.Receive()
+	go this.Dispatcher()
+	go this.SendToNet()
 }
-func (this *Client) Send(msg interface{}) {
-	if msg == nil || this.SendChan == nil {
-		return
-	}
-	this.SendChan <- msg
+
+func (this *Client)Dispatcher()  {
+	
 }
 
 ////todo 读取接受的缓冲消息并派发到对应处理模块
@@ -51,14 +57,15 @@ func (this *Client) Send(msg interface{}) {
 
 //发送网络端消息到客户端
 func (this *Client) SendToNet() {
-	if this.Conn == nil {
+	if this.Conn == nil||this.Conn.IsClosed() {
+		logService.LogError(fmt.Sprintf("connect is closed : client id :%d",this.ConnID))
 		return
 	}
 	for {
 		if m, ok := <-this.SendChan; ok == true {
 			data, err := netmessage.PackageNetMessage(m)
 			if err == nil {
-				this.Conn.Write(data)
+				this.Conn.WriteMsg(data)
 			}
 		} else {
 			break
