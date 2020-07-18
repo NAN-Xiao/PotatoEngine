@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"potatoengine/src/logService"
 	"potatoengine/src/netmessage"
 )
 
@@ -17,8 +18,11 @@ type TcpConnect struct {
 }
 
 //接受断言消息放入队列
-func (this *TcpConnect) Receive() error {
+func (this *TcpConnect) Receive()  {
 	for {
+		if this.iscloes{
+			break
+		}
 		var buf = make([]byte, 4)
 		n, err := io.ReadFull(this.Conn, buf)
 		if err == io.EOF {
@@ -36,7 +40,25 @@ func (this *TcpConnect) Receive() error {
 		}
 		this.ReceiveChan <- msg
 	}
-	return fmt.Errorf("net msg process is error")
+	logService.LogError(fmt.Sprintf("receive net msg  is error>>client id::%s",this.ConnID))
+	this.Close()
+}
+func (this *TcpConnect) Send() {
+	for {
+		if this.iscloes{
+			break
+		}
+		msg := <-this.SendChan
+		if msg == nil {
+			continue
+		}
+		data, err := netmessage.PackageNetMessage(msg)
+		if err!=nil{
+			continue
+		}
+		this.Conn.Write(data)
+		continue
+	}
 }
 
 //从队列读取消息结构
@@ -46,6 +68,7 @@ func (this *TcpConnect) Read() interface{} {
 	}
 	return <-this.ReceiveChan
 }
+
 //本地调用缓存到发送消息队列
 func (this *TcpConnect) Write(msg interface{}) {
 	this.SendChan <- msg
@@ -64,16 +87,18 @@ func (this *TcpConnect) WriteToNet() {
 		this.Conn.Write(data)
 	}
 }
+
 //关闭tcp链接
 func (this *TcpConnect) Close() {
 
 	close(this.ReceiveChan)
 	close(this.SendChan)
 	this.Conn.Close()
-	this.iscloes=true
+	this.iscloes = true
 }
+
 //连接是否关闭
-func (this *TcpConnect)IsClosed()bool  {
+func (this *TcpConnect) IsClosed() bool {
 	return this.iscloes
 }
 

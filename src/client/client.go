@@ -23,13 +23,9 @@ func (this *Client) Recevie() {
 		return
 	}
 	go this.Conn.Receive()
-	go this.Dispatcher()
-	go this.SendToNet()
+	go this.Conn.()
 }
 
-func (this *Client)Dispatcher()  {
-	
-}
 
 ////todo 读取接受的缓冲消息并派发到对应处理模块
 //func (this *Client) DisPatchMsg() {

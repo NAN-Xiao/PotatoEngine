@@ -2,8 +2,9 @@ package connection
 
 type IConn interface {
 	//SendMessage(msg netmessage.ServerMsgPackage)
-	Receive() error
+	Receive()
 	Read() interface{}
+	Send(interface{})
 	Write(interface{})
 	WriteToNet()
 	Close()
