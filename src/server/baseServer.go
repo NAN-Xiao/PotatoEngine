@@ -27,6 +27,7 @@ func (this *BaseServer) RegisterSpace(sp space.ISpace) {
 		return
 	}
 	this.SpacesMap[name] = sp
+	spaceMgr.AddSpace(sp)
 	fmt.Printf("RegisterSpace::%s \n", name)
 }
 
@@ -63,6 +64,7 @@ func (this *BaseServer) SpaceRun() bool {
 			continue
 		}
 		globleTimer.RegiestTick(sp.Tick)
+		sp.OnStart()
 		go sp.Process()
 		logService.Log(fmt.Sprintf(" space(%s)is run",sp.GetName()))
 	}
