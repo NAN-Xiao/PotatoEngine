@@ -27,6 +27,7 @@ func main() {
 		Agents     map[uint32]*agent.Agent
 		Spacechanl chan netmessage.ServerMsgPackage
 	}{SpaceID: 0, Spacename:"login" , Agents:nil , Spacechanl:nil }}
+	sp.AddEntity()
 	login.RegisterSpace(&sp)
 	login.Run()
 	select {}

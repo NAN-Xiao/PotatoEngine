@@ -1,6 +1,9 @@
 package connection
 
+import "net"
+
 type IConn interface {
+
 	//网络收发
 	Receive()
 	Send()
@@ -10,4 +13,6 @@ type IConn interface {
 	//关闭
 	Close()
 	IsClosed() bool
+	GetRemoteAddr() net.Addr
+
 }

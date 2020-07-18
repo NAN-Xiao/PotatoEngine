@@ -15,10 +15,13 @@ func init()  {
 }
 
 func Log(ctx string)  {
-	defaultLog<-ctx
+	s:=fmt.Sprintf("%s \n",ctx)
+	errorLog<-s
+	defaultLog<-s
 }
 func LogError(ctx string)  {
-	errorLog<-ctx
+	s:=fmt.Sprintf("%s \n",ctx)
+	errorLog<-s
 }
 func Tick()  {
 	if errorLog!=nil&& len(errorLog)>0{

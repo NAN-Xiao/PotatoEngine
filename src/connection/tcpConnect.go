@@ -11,11 +11,12 @@ import (
 
 type TcpConnect struct {
 	Conn        *net.TCPConn
-	ConnID      int32
+	ConnID      ConnID
 	ReceiveChan chan interface{}
 	SendChan    chan interface{}
 	iscloes     bool
 }
+
 //接受断言消息放入队列
 func (this *TcpConnect) Receive()  {
 	for {
@@ -85,7 +86,9 @@ func (this *TcpConnect) Close() {
 func (this *TcpConnect) IsClosed() bool {
 	return this.iscloes
 }
-
+func (this *TcpConnect) GetRemoteAddr() net.Addr{
+	 return this.Conn.RemoteAddr()
+}
 func NewTcpConnection(con *net.TCPConn, cid int32) *TcpConnect {
 	tcp := &TcpConnect{
 		Conn:        con,

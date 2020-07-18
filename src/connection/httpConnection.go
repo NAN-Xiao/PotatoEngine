@@ -1,6 +1,7 @@
 package connection
 
 type HttpConnect struct {
+	connID ConnID
 }
 
 func (this *HttpConnect) Read() (l int, err error) {

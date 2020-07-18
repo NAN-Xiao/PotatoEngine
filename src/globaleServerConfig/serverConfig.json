@@ -1,0 +1,5 @@
+{
+  "server": {
+    "maxpkgcount": 1024
+  }
+}
