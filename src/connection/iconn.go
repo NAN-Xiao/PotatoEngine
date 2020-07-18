@@ -1,12 +1,13 @@
 package connection
 
 type IConn interface {
-	//SendMessage(msg netmessage.ServerMsgPackage)
+	//网络收发
 	Receive()
+	Send()
+	//内部收发
 	Read() interface{}
-	Send(interface{})
 	Write(interface{})
-	WriteToNet()
+	//关闭
 	Close()
 	IsClosed() bool
 }

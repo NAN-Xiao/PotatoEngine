@@ -16,7 +16,6 @@ type TcpConnect struct {
 	SendChan    chan interface{}
 	iscloes     bool
 }
-
 //接受断言消息放入队列
 func (this *TcpConnect) Receive()  {
 	for {
@@ -73,21 +72,6 @@ func (this *TcpConnect) Read() interface{} {
 func (this *TcpConnect) Write(msg interface{}) {
 	this.SendChan <- msg
 }
-
-//发送网络数据
-func (this *TcpConnect) WriteToNet() {
-
-	for {
-		var msg interface{}
-		msg = <-this.SendChan
-		data, err := netmessage.PackageNetMessage(msg)
-		if err != nil {
-			return
-		}
-		this.Conn.Write(data)
-	}
-}
-
 //关闭tcp链接
 func (this *TcpConnect) Close() {
 
