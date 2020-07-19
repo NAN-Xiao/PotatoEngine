@@ -15,7 +15,7 @@ type Client struct {
 	Conn     connection.IConn
 	Account  *account.Account
 	Agent    *agent.Agent
-	Conn_id *connection.ConnID
+	Conn_id connection.ConnID
 }
 
 //开始接受发送线程
@@ -31,6 +31,9 @@ func (this *Client) DispatchMsg() {
 		if this.Conn.IsClosed() {
 			this.Delete()
 			break
+		}
+		if this.Account==nil{
+			this.Account=account.NewAccount(this)
 		}
 		msg:=this.Conn.Read()
 		if msg!=nil{

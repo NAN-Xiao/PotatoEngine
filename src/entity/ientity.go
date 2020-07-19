@@ -1,5 +1,5 @@
-//package entity
-//
+package entity
+
 //type IEntity interface {
 //	GetEntityID() int32
 //	SetEntityID(int32)
@@ -11,3 +11,8 @@
 //	//退出场景
 //	LeaveSpace(spaceID int32)
 //}
+
+//type IEntity interface {
+//	GetEntity() *Entity
+//}
+

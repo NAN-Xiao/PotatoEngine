@@ -6,9 +6,9 @@ import (
 )
 
 type Agent struct {
-
 	entity.Entity
 }
+
 
 
 func NewAgent(cl *client.Client) *Agent {

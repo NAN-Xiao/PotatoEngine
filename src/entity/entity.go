@@ -2,17 +2,19 @@ package entity
 
 import (
 	"fmt"
+	"potatoengine/src/connection"
 	"potatoengine/src/logService"
 	"potatoengine/src/space"
 )
 
 type Entity struct {
-	Created       bool
-	connID        int32
-	Agnetid       int32
+	connID        connection.ConnID
+	EntityID      int32
 	spaceid       int32
 	reveiveMsgQue chan interface{}
 	sendMsgQue    chan interface{}
+
+	Created bool
 }
 
 //消息收发
@@ -35,10 +37,10 @@ func (this *Entity) Write(pkg interface{}) {
 
 //
 func (this *Entity) GetEntityID() int32 {
-	return this.id
+	return this.EntityID
 }
 func (this *Entity) SetEntityID(id int32) {
-	this.id = id
+	this.EntityID = id
 }
 func (this *Entity) GetSpaceID() int32 {
 	return this.spaceid
@@ -46,7 +48,7 @@ func (this *Entity) GetSpaceID() int32 {
 
 //当前所在是space
 func (this *Entity) GetCurrentSpace() *space.BaseSpace {
-	sp := space.GetSpace(this.spaceid)
+	sp := spaceMgr.GetSpace(this.spaceid)
 	if sp == nil {
 		return nil
 	}
@@ -56,7 +58,7 @@ func (this *Entity) GetCurrentSpace() *space.BaseSpace {
 //进入场景
 func (this *Entity) EnterSpace(spaceID int32) {
 
-	nspace := space.GetSpace(spaceID)
+	nspace := spaceMgr.GetSpace(spaceID)
 	if nspace == nil {
 		logService.LogError(fmt.Sprintf("this entity ready to enter next space is nil ,this.conn id is ::%s", this.connID))
 	}
@@ -66,9 +68,19 @@ func (this *Entity) EnterSpace(spaceID int32) {
 //退出场景
 func (this *Entity) LeaveSpace(spaceID int32) {
 
-	cspace := space.GetSpace(this.spaceid)
+	cspace := spaceMgr.GetSpace(this.spaceid)
 	if cspace == nil {
 		logService.LogError(fmt.Sprintf("this entity is not at any space,this.conn id is ::%s", this.connID))
 	}
 	cspace.LeaveSpace(this)
+}
+
+func (this *Entity) CreatEntity(connid connection.ConnID) {
+	this.connID = connid
+	this.EntityID=-1
+	this.spaceid = -1
+	this.reveiveMsgQue=make(chan interface{},128)
+	this.sendMsgQue=make(chan interface{},128)
+	this.Created=true
+
 }
