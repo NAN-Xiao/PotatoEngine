@@ -2,7 +2,7 @@ package main
 
 import (
 	"potatoengine/src/agent"
-	"potatoengine/src/connection"
+	"potatoengine/src/netWork"
 	"potatoengine/src/engine"
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
@@ -29,7 +29,7 @@ func main() {
 
 //创建gateserver
 func GateServer() *server.BaseServer {
-	gate := server.NewServer(server.E_Game, connection.ETcp)
+	gate := server.NewServer(server.E_Game, netWork.ETcp)
 	gatasp := GateSpace{struct {
 		SpaceID    int32
 		Spacename  string

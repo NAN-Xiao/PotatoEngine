@@ -1,4 +1,4 @@
-package connection
+package netWork
 
 import (
 	"encoding/binary"
@@ -10,17 +10,23 @@ import (
 )
 
 type TcpConnect struct {
-	Conn        *net.TCPConn
-	ConnID      ConnID
-	ReceiveChan chan interface{}
-	SendChan    chan interface{}
-	iscloes     bool
+	Conn     *net.TCPConn
+	ConnID   ConnID
+	SendChan chan interface{}
+	iscloes  bool
+}
+
+func (this *TcpConnect) GetID() ConnID {
+	return this.ConnID
 }
 
 //接受断言消息放入队列
-func (this *TcpConnect) Receive()  {
+func (this *TcpConnect) Receive(msgque chan interface{}) {
 	for {
-		if this.iscloes{
+		if msgque == nil {
+			return
+		}
+		if this.iscloes {
 			break
 		}
 		var buf = make([]byte, 4)
@@ -38,14 +44,14 @@ func (this *TcpConnect) Receive()  {
 		if id < 0 || msg == nil {
 			break
 		}
-		this.ReceiveChan <- msg
+		msgque <- msg
 	}
-	logService.LogError(fmt.Sprintf("receive net msg  is error>>client id::%s",this.ConnID))
+	logService.LogError(fmt.Sprintf("receive net msg  is error>>client id::%s", this.ConnID))
 	this.Close()
 }
-func (this *TcpConnect) Send() {
+func (this *TcpConnect) Send(msg interface{}) {
 	for {
-		if this.iscloes{
+		if this.iscloes {
 			break
 		}
 		msg := <-this.SendChan
@@ -53,7 +59,7 @@ func (this *TcpConnect) Send() {
 			continue
 		}
 		data, err := netmessage.PackageNetMessage(msg)
-		if err!=nil{
+		if err != nil {
 			continue
 		}
 		this.Conn.Write(data)
@@ -73,6 +79,7 @@ func (this *TcpConnect) Read() interface{} {
 func (this *TcpConnect) Write(msg interface{}) {
 	this.SendChan <- msg
 }
+
 //关闭tcp链接
 func (this *TcpConnect) Close() {
 
@@ -86,16 +93,20 @@ func (this *TcpConnect) Close() {
 func (this *TcpConnect) IsClosed() bool {
 	return this.iscloes
 }
-func (this *TcpConnect) GetRemoteAddr() net.Addr{
-	 return this.Conn.RemoteAddr()
+func (this *TcpConnect) GetRemoteAddr() net.Addr {
+	return this.Conn.RemoteAddr()
 }
-func NewTcpConnection(con *net.TCPConn, cid int32) *TcpConnect {
+func NewTcpConnection(con *net.TCPConn) *TcpConnect {
 	tcp := &TcpConnect{
 		Conn:        con,
-		ConnID:      cid,
+		ConnID:      -1,
 		ReceiveChan: make(chan interface{}, 128),
 		SendChan:    make(chan interface{}, 128),
 		iscloes:     false,
 	}
+	connectCount += 1
+	tcp.ConnID.Set(connectCount)
 	return tcp
 }
+
+var connectCount int32 = 0

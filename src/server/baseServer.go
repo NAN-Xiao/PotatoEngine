@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"potatoengine/src/connection"
+	"potatoengine/src/netWork"
 	"potatoengine/src/globleTimer"
 	"potatoengine/src/logService"
 	"potatoengine/src/space"
@@ -10,9 +10,9 @@ import (
 
 type BaseServer struct {
 	SpacesMap map[string]space.ISpace
-	ConType   connection.ConnType
+	ConType   netWork.ConnType
 	Name      E_ServerNames
-	Listener  connection.IListener
+	Listener  netWork.IListener
 }
 
 //注册当前server的space
@@ -42,11 +42,11 @@ func (this *BaseServer) Run() {
 	globleTimer.Tick()
 	//启动监听 top｜http
 	switch this.ConType {
-		case connection.ETcp:
-			this.Listener = connection.NewTcpListener("tcp", "0.0.0.0:8999")
+		case netWork.ETcp:
+			this.Listener = netWork.NewTcpListener("tcp", "0.0.0.0:8999")
 			this.Listener.Listen()
-		case connection.EHttp:
-			logService.LogError("gameserver cant use http connection")
+		case netWork.EHttp:
+			logService.LogError("gameserver cant use http netWork")
 	}
 
 	this.SpaceRun()
@@ -71,7 +71,7 @@ func (this *BaseServer) SpaceRun() bool {
 	return true
 }
 
-func NewServer(srname E_ServerNames, connType connection.ConnType) *BaseServer {
+func NewServer(srname E_ServerNames, connType netWork.ConnType) *BaseServer {
 	sr := &BaseServer{
 		SpacesMap: make(map[string]space.ISpace),
 		Name:      srname,

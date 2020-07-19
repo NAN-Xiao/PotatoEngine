@@ -18,14 +18,7 @@ type Client struct {
 	Conn_id connection.ConnID
 }
 
-//开始接受发送线程
-func (this *Client) Connect() {
-	if this.Conn == nil {
-		return
-	}
-	go this.Conn.Receive()
-	go this.Conn.Send()
-}
+
 func (this *Client) DispatchMsg() {
 	for {
 		if this.Conn.IsClosed() {

@@ -1,11 +1,12 @@
-package connection
+package netWork
 
 import "net"
 
 type IConn interface {
 
+	GetID() ConnID
 	//网络收发
-	Receive()
+	Receive(chan interface{})
 	Send()
 	//内部收发
 	Read() interface{}

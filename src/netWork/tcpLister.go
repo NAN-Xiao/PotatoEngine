@@ -1,8 +1,8 @@
-package connection
+package netWork
 
 import (
 	"net"
-	"potatoengine/src/client"
+	"potatoengine/src/account"
 )
 
 type TcpListener struct {
@@ -25,10 +25,10 @@ func (this *TcpListener) Listen() {
 				println(err)
 				return
 			}
-			cl := client.NewClient(c)
-			cl.Conn_id.Set(client.GenConnID())
-			client.AddClient(cl)
-			cl.Connect()
+			ac := new(account.Account)
+			connect:=NewTcpConnection(c)
+			ac.CreatEntity(connect)
+
 		}
 	}()
 

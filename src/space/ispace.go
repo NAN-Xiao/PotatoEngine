@@ -1,11 +1,15 @@
 package space
 
-import "potatoengine/src/agent"
+import (
+	"potatoengine/src/agent"
+	"potatoengine/src/entity"
+)
+
 
 type ISpace interface {
 	//todo 重新封装可能
-	LeaveSpace(ag *agent.Agent)
-	EnterSpace(ag *agent.Agent)
+	LeaveSpace(ag *entity.Entity)
+	EnterSpace(ag *entity.Entity)
 
 
 	//暂时不动

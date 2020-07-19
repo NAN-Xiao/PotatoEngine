@@ -1,7 +1,6 @@
 package account
 
 import (
-	"potatoengine/src/client"
 	"potatoengine/src/entity"
 )
 
@@ -10,10 +9,7 @@ type Account struct {
 	Longin bool
 }
 
-
-func NewAccount(cl *client.Client) *Account {
-	ac := new (Account)
-	ac.Longin=false
-	ac.CreatEntity(cl.Conn_id)
-	return ac
+func TestName(t *Account) {
+	t.Read()
 }
+//开始接受发送线程
