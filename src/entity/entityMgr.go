@@ -1,17 +1,17 @@
 package entity
 
 
-var EntityMap map[int32]Entity
+var EntityMap map[int32] IEntity
 
-func GetEntity(conid int32) Entity {
+func GetEntity(conid int32) IEntity {
 	entity, ok := EntityMap[conid]
 	if ok {
 		return entity
 	}
 	return nil
 }
-func AddEntity(entity Entity)  {
-	id:=int32(entity.Conn.GetID())
+func RegistEntity(entity IEntity)  {
+	id:=int32(entity.GetEntity().EntityID)
 	if _,ok:=EntityMap[id];ok==true{
 		return
 	}

@@ -9,7 +9,7 @@ type Account struct {
 	Longin bool
 }
 
-func TestName(t *Account) {
-	t.Read()
+func (this *Account)GetEntity() entity.Entity {
+	return  this.Entity
 }
 //开始接受发送线程

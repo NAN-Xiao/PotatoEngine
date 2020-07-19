@@ -20,14 +20,14 @@ func (this *BaseServer) RegisterSpace(sp space.ISpace) {
 	if sp == nil {
 		return
 	}
-	name := sp.GetName()
+	name := sp.GetSpace().GetName()
 	_, ok := this.SpacesMap[name]
 	if ok {
 		fmt.Printf("have current space::%s \n", name)
 		return
 	}
 	this.SpacesMap[name] = sp
-	spaceMgr.AddSpace(sp)
+	space.AddSpace(sp)
 	fmt.Printf("RegisterSpace::%s \n", name)
 }
 
@@ -63,10 +63,10 @@ func (this *BaseServer) SpaceRun() bool {
 		if sp == nil {
 			continue
 		}
-		globleTimer.RegiestTick(sp.Tick)
-		sp.OnStart()
-		go sp.Process()
-		logService.Log(fmt.Sprintf(" space(%s)is run",sp.GetName()))
+		globleTimer.RegiestTick(sp.GetSpace().Tick)
+		sp.GetSpace().OnStart()
+		go sp.GetSpace().Process()
+		logService.Log(fmt.Sprintf(" space(name::%s)is run",sp.GetSpace().GetName()))
 	}
 	return true
 }

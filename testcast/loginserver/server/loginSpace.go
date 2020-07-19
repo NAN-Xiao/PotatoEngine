@@ -4,7 +4,6 @@ import (
 	"fmt"
 	_ "github.com/go-redis/redis"
 	"net/http"
-	"potatoengine/src/agent"
 	"potatoengine/src/space"
 )
 
@@ -19,40 +18,19 @@ type UserInfo struct {
 
 type LoginSpace struct {
 	space.BaseSpace
+	space.ISpace
 }
+func (this *LoginSpace) OnStart() {
 
+}
 //todo http监听返回登陆结果
 func (this *LoginSpace) Process() {
 	fmt.Println("Login Space start")
 	http.HandleFunc("/login", LoginHandle)
 	http.ListenAndServe("0.0.0.0:8999", nil)
 }
-
-//agent 进入场景
-func (this *LoginSpace) LeaveSpace(ag *agent.Agent) {
-	v, ok := this.Agents[ag.GetUserID()]
-	if ok {
-		v.OnLeaveSpace()
-		delete(this.Agents, v.GetUserID())
-	}
-}
-func (this *LoginSpace) GetID() int32 {
-	return this.SpaceID
-}
-
-//agent退出场景
-func (this *LoginSpace) EnterSpace(ag *agent.Agent) {
-	_, ok := this.Agents[ag.GetUserID()]
-	if ok {
-		return
-	}
-	this.Agents[ag.GetUserID()] = ag
-	ag.OnLeaveSpace()
-}
-
-func (this *LoginSpace) GetName() string {
-	return this.Spacename
-}
 func (this *LoginSpace)Tick()  {
 
 }
+
+

@@ -5,11 +5,10 @@ import (
 	"potatoengine/src/entity"
 	"potatoengine/src/logService"
 	"potatoengine/src/netmessage"
-	spaceMgr "potatoengine/src/space"
 )
 
 type BaseSpace struct {
-	GameID int32
+	GameID     int32
 	SpaceID    int32
 	Spacename  string
 	Entitys    map[int32]*entity.Entity
@@ -27,6 +26,7 @@ func (this *BaseSpace) LeaveSpace(et *entity.Entity) {
 		delete(this.Entitys, id)
 	}
 }
+
 //entity加入当前地图
 func (this *BaseSpace) EnterSpace(entity *entity.Entity) {
 	if len(this.Entitys) <= 0 || this.Entitys == nil {
@@ -34,35 +34,11 @@ func (this *BaseSpace) EnterSpace(entity *entity.Entity) {
 		return
 	}
 	id := entity.GetEntityID()
-	if sp := spaceMgr.GetSpace(id); sp==nil {
+	if sp := GetSpace(id); sp == nil {
 		logService.LogError(fmt.Sprintf("space(id:%s) have same entity(entityid :%s)", this.SpaceID, id))
 		return
 	}
 	this.Entitys[id] = entity
 }
 
-//暂时不动
-func (this *BaseSpace)SetGameID(gid int32){
 
-}
-func (this *BaseSpace)GetGameID()int32{
-
-}
-func (this *BaseSpace)GetName() string{
-
-}
-func (this *BaseSpace)GetID() int32{
-
-}
-//开始启动调用
-func (this *BaseSpace)OnStart(){
-
-}
-//按时间间隔调用
-func (this *BaseSpace)Tick(){
-
-}
-//不按时间同步调用
-func (this *BaseSpace)Process(){
-
-}

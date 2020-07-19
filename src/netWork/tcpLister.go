@@ -3,6 +3,8 @@ package netWork
 import (
 	"net"
 	"potatoengine/src/account"
+	"potatoengine/src/entity"
+	"potatoengine/src/space"
 )
 
 type TcpListener struct {
@@ -28,7 +30,10 @@ func (this *TcpListener) Listen() {
 			ac := new(account.Account)
 			connect:=NewTcpConnection(c)
 			ac.CreatEntity(connect)
-
+			entity.RegistEntity(ac)
+			ac.Connect()
+			sp:=space.GetSpaceByName("GateSpace")
+			ac.EnterSpace(sp.GetSpace().SpaceID)
 		}
 	}()
 

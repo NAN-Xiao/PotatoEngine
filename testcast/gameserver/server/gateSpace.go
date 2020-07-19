@@ -1,30 +1,26 @@
 package main
 
 import (
-	"potatoengine/src/agent"
 	"potatoengine/src/space"
 )
 
 type GateSpace struct {
 	space.BaseSpace
+	space.ISpace
 }
 
+func (this *GateSpace) GetSpace() *space.BaseSpace {
+	return &this.BaseSpace
+}
+//Ispace
+func (this *GateSpace)OnStart()  {
+	
+}
 func (this *GateSpace) Process() {
 
 }
-func (this *GateSpace) GetName() string {
-	return this.Spacename
-}
-func (this *GateSpace) GetID() int32 {
-	return this.SpaceID
-}
-
-func (this *GateSpace) LeaveSpace(ag *agent.Agent) {
-
-}
-func (this *GateSpace) EnterSpace(ag *agent.Agent) {
-
-}
-func (this *GateSpace)Tick()  {
+func (this *GateSpace) Tick() {
 	println("gate space tick")
 }
+
+
