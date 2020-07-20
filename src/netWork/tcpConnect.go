@@ -46,7 +46,7 @@ func (this *TcpConnect) Receive(msgque chan interface{}) {
 		}
 		msgque <- msg
 	}
-	logService.LogError(fmt.Sprintf("receive net msg  is error>>client id::%s", this.ConnID))
+	logService.LogError(fmt.Sprintf("receive net msg  is error>>client id::%s", this.ConnID.Get()))
 	this.Close()
 }
 func (this *TcpConnect) Send(msg interface{}) {

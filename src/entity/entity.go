@@ -68,7 +68,7 @@ func (this *Entity) GetSpaceID() int32 {
 
 //得到当前所在是space
 func (this *Entity) GetCurrentSpace() space.ISpace {
-	sp := space.GetSpace(this.spaceid)
+	sp := space.GetSpaceByID(this.spaceid)
 	if sp == nil {
 		return nil
 	}
@@ -76,9 +76,9 @@ func (this *Entity) GetCurrentSpace() space.ISpace {
 }
 
 //进入指定场景
-func (this *Entity) EnterSpace(spaceID int32) {
+func (this *Entity) EnterSpace(sp space.ISpace) {
 
-	nspace := space.GetSpace(spaceID)
+	nspace := space.GetSpaceByID(sp.GetSpace().SpaceID)
 	if nspace == nil {
 		logService.LogError(fmt.Sprintf("this entity ready to enter next space is nil ,this.conn id is ::%s", this.Conn.GetID()))
 	}
@@ -86,9 +86,9 @@ func (this *Entity) EnterSpace(spaceID int32) {
 }
 
 //退出指定场景
-func (this *Entity) LeaveSpace(spaceID int32) {
+func (this *Entity) LeaveSpace(sp space.ISpace) {
 
-	cspace := space.GetSpace(this.spaceid)
+	cspace := space.GetSpaceByID(sp.GetSpace().SpaceID)
 	if cspace == nil {
 		logService.LogError(fmt.Sprintf("this entity is not at any space,this.conn id is ::%s", this.Conn.GetID()))
 	}

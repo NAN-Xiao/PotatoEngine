@@ -7,29 +7,28 @@ func init() {
 		spaceMap = make(map[int32]ISpace, 0)
 	}
 }
-
 //regist space to globle space map
 func AddSpace(sp ISpace) {
-	spid := sp.GetSpace().SpaceID
+	spid := sp.GetSpaceByID().SpaceID
 	if _, ok := spaceMap[spid]; ok {
 		return
 	}
 	spaceMap[spid] = sp
 }
-
-func GetSpace(id int32) ISpace {
+//根据id查找注册到全局space
+func GetSpaceByID(id int32) ISpace {
 	if sp, ok := spaceMap[id]; ok {
 		return sp
 	}
 	return nil
 }
-
+//根据name查找注册到全局space
 func GetSpaceByName(name string) ISpace {
 	if spaceMap == nil || len(spaceMap) <= 0 {
 		return nil
 	}
 	for i := range spaceMap {
-		if spaceMap[i].GetSpace().Spacename == name {
+		if spaceMap[i].GetSpaceByID().Spacename == name {
 			return spaceMap[i]
 		}
 	}

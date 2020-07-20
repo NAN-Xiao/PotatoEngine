@@ -28,12 +28,17 @@ func (this *TcpListener) Listen() {
 				return
 			}
 			ac := new(account.Account)
-			connect:=NewTcpConnection(c)
+			connect := NewTcpConnection(c)
+			sp := space.GetSpaceByName("GateSpace")
+			if sp == nil {
+				c.Close()
+				break
+			}
+			//当有客户端链接 建立一个account对象先放入到gate中
 			ac.CreatEntity(connect)
 			entity.RegistEntity(ac)
 			ac.Connect()
-			sp:=space.GetSpaceByName("GateSpace")
-			ac.EnterSpace(sp.GetSpace().SpaceID)
+			ac.EnterSpace(sp)
 		}
 	}()
 

@@ -46,9 +46,8 @@ func (this *BaseServer) Run() {
 			this.Listener = netWork.NewTcpListener("tcp", "0.0.0.0:8999")
 			this.Listener.Listen()
 		case netWork.EHttp:
-			logService.LogError("gameserver cant use http netWork")
+			logService.LogError("gateserver cant use http netWork")
 	}
-
 	this.SpaceRun()
 }
 

@@ -1,12 +1,13 @@
 package main
 
 import (
-	"potatoengine/src/agent"
-	"potatoengine/src/netWork"
 	"potatoengine/src/engine"
+	"potatoengine/src/entity"
+	"potatoengine/src/netWork"
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/server"
+	"potatoengine/src/space"
 )
 
 func RegistServerInfo() {
@@ -19,7 +20,7 @@ func main() {
 	RegistServerInfo()
 
 	//创建gateserver添加全局
-	gate:=GateServer()
+	gate := GateServer()
 	engine.AddServer(gate)
 	engine.Start()
 	println("game server started")
@@ -30,13 +31,13 @@ func main() {
 //创建gateserver
 func GateServer() *server.BaseServer {
 	gate := server.NewServer(server.E_Game, netWork.ETcp)
-	gatasp := GateSpace{struct {
-		SpaceID    int32
-		Spacename  string
-		Agents     map[uint32]*agent.Agent
-		Spacechanl chan netmessage.ServerMsgPackage
-	}{SpaceID: 0, Spacename: "GateSpace", Agents: make(map[uint32]*agent.Agent), Spacechanl: make(chan netmessage.ServerMsgPackage)}}
-
-	gate.RegisterSpace(&gatasp)
+	gatesp := new(GateSpace)
+	gatesp.BaseSpace = space.BaseSpace{
+		GameID:    0,
+		SpaceID:   1,
+		Spacename: "GateSpace",
+		Entitys:   make(map[int32]entity.IEntity),
+	}
+	gate.RegisterSpace(gatesp)
 	return gate
 }

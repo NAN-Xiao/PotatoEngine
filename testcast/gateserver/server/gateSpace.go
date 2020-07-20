@@ -14,10 +14,10 @@ func (this *GateSpace) GetSpace() *space.BaseSpace {
 }
 //Ispace
 func (this *GateSpace)OnStart()  {
-	
+	println("gate space started")
 }
 func (this *GateSpace) Process() {
-
+	println("gate space processing")
 }
 func (this *GateSpace) Tick() {
 	println("gate space tick")
