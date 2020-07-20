@@ -39,7 +39,7 @@ func (this *TcpListener) Listen() {
 			ac.CreatEntity(connect)
 			entity.RegistEntity(ac)
 			ac.Connect()
-			ac.EnterSpace(sp)
+			sp.GetSpace().EnterSpace(ac)
 		}
 	}()
 

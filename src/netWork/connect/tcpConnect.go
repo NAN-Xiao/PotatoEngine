@@ -68,22 +68,22 @@ func (this *TcpConnect) Send(msg interface{}) {
 }
 
 //从队列读取消息结构
-func (this *TcpConnect) Read() interface{} {
-	if this.ReceiveChan == nil || len(this.ReceiveChan) <= 0 {
-		return nil
-	}
-	return <-this.ReceiveChan
-}
-
-//本地调用缓存到发送消息队列
-func (this *TcpConnect) Write(msg interface{}) {
-	this.SendChan <- msg
-}
+//func (this *TcpConnect) Read() interface{} {
+//	if this.ReceiveChan == nil || len(this.ReceiveChan) <= 0 {
+//		return nil
+//	}
+//	return <-this.ReceiveChan
+//}
+//
+////本地调用缓存到发送消息队列
+//func (this *TcpConnect) Write(msg interface{}) {
+//	this.SendChan <- msg
+//}
 
 //关闭tcp链接
 func (this *TcpConnect) Close() {
 
-	close(this.ReceiveChan)
+	//close(this.ReceiveChan)
 	close(this.SendChan)
 	this.Conn.Close()
 	this.iscloes = true
@@ -100,7 +100,6 @@ func NewTcpConnection(con *net.TCPConn) *TcpConnect {
 	tcp := &TcpConnect{
 		Conn:        con,
 		ConnID:      -1,
-		ReceiveChan: make(chan interface{}, 128),
 		SendChan:    make(chan interface{}, 128),
 		iscloes:     false,
 	}

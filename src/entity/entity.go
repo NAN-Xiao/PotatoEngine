@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"potatoengine/src/logService"
 	"potatoengine/src/netWork/connect"
-	"potatoengine/src/space"
 )
 
 type Entity struct {
@@ -66,34 +65,34 @@ func (this *Entity) GetSpaceID() int32 {
 	return this.spaceid
 }
 
-//得到当前所在是space
-func (this *Entity) GetCurrentSpace() space.ISpace {
-	sp := space.GetSpaceByID(this.spaceid)
-	if sp == nil {
-		return nil
-	}
-	return sp
-}
+////得到当前所在是space
+//func (this *Entity) GetCurrentSpace() space.ISpace {
+//	sp := space.GetSpaceByID(this.spaceid)
+//	if sp == nil {
+//		return nil
+//	}
+//	return sp
+//}
 
 //进入指定场景
-func (this *Entity) EnterSpace(sp space.ISpace) {
-
-	nspace := space.GetSpaceByID(sp.GetSpace().SpaceID)
-	if nspace == nil {
-		logService.LogError(fmt.Sprintf("this entity ready to enter next space is nil ,this.conn id is ::%s", this.Conn.GetID()))
-	}
-	nspace.GetSpace().EnterSpace(this)
-}
-
-//退出指定场景
-func (this *Entity) LeaveSpace(sp space.ISpace) {
-
-	cspace := space.GetSpaceByID(sp.GetSpace().SpaceID)
-	if cspace == nil {
-		logService.LogError(fmt.Sprintf("this entity is not at any space,this.conn id is ::%s", this.Conn.GetID()))
-	}
-	cspace.GetSpace().LeaveSpace(this)
-}
+//func (this *Entity) EnterSpace(sp space.ISpace) {
+//
+//	nspace := space.GetSpaceByID(sp.GetSpace().SpaceID)
+//	if nspace == nil {
+//		logService.LogError(fmt.Sprintf("this entity ready to enter next space is nil ,this.conn id is ::%s", this.Conn.GetID()))
+//	}
+//	nspace.GetSpace().EnterSpace(this)
+//}
+//
+////退出指定场景
+//func (this *Entity) LeaveSpace(sp space.ISpace) {
+//
+//	cspace := space.GetSpaceByID(sp.GetSpace().SpaceID)
+//	if cspace == nil {
+//		logService.LogError(fmt.Sprintf("this entity is not at any space,this.conn id is ::%s", this.Conn.GetID()))
+//	}
+//	cspace.GetSpace().LeaveSpace(this)
+//}
 
 //创建一个新到entity
 func (this *Entity) CreatEntity(conn connect.IConn) {

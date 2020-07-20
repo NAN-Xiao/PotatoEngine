@@ -12,15 +12,17 @@ type GateSpace struct {
 func (this *GateSpace) GetSpace() *space.BaseSpace {
 	return &this.BaseSpace
 }
+
 //Ispace
-func (this *GateSpace)OnStart()  {
+func (this *GateSpace) OnStart() {
 	println("gate space started")
 }
 func (this *GateSpace) Process() {
-	println("gate space processing")
+	for {
+		println("gate space processing")
+	}
 }
 func (this *GateSpace) Tick() {
-	println("gate space tick")
+
+	println("gate space tick;entitys len ",len(this.Entitys))
 }
-
-
