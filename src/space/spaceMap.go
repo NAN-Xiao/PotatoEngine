@@ -9,7 +9,7 @@ func init() {
 }
 //regist space to globle space map
 func AddSpace(sp ISpace) {
-	spid := sp.GetSpaceByID().SpaceID
+	spid := sp.GetSpace().SpaceID
 	if _, ok := spaceMap[spid]; ok {
 		return
 	}
@@ -28,7 +28,7 @@ func GetSpaceByName(name string) ISpace {
 		return nil
 	}
 	for i := range spaceMap {
-		if spaceMap[i].GetSpaceByID().Spacename == name {
+		if spaceMap[i].GetSpace().Spacename == name {
 			return spaceMap[i]
 		}
 	}

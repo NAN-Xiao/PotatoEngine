@@ -11,7 +11,6 @@ type BaseSpace struct {
 	SpaceID    int32
 	Spacename  string
 	Entitys    map[int32] entity.IEntity
-	//Spacechanl chan netmessage.ServerMsgPackage
 }
 
 //从当前space移除entity

@@ -1,4 +1,4 @@
-package netWork
+package connect
 
 type ConnType string
 

@@ -1,4 +1,4 @@
-package netWork
+package connect
 
 type HttpConnect struct {
 	connID ConnID

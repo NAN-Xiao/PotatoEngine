@@ -3,12 +3,12 @@ package entity
 import (
 	"fmt"
 	"potatoengine/src/logService"
-	"potatoengine/src/netWork"
+	"potatoengine/src/netWork/connect"
 	"potatoengine/src/space"
 )
 
 type Entity struct {
-	Conn          netWork.IConn
+	Conn          connect.IConn
 	EntityID      int32
 	spaceid       int32
 	reveiveMsgQue chan interface{}
@@ -23,7 +23,7 @@ func (this *Entity) Connect() {
 	//接收消息放入 receive队列
 	go this.Conn.Receive(this.reveiveMsgQue)
 	//发送消息到队列 从send队列
-	go func(msgque chan interface{}, con netWork.IConn) {
+	go func(msgque chan interface{}, con connect.IConn) {
 		for {
 			if msgque == nil {
 				break
@@ -96,7 +96,7 @@ func (this *Entity) LeaveSpace(sp space.ISpace) {
 }
 
 //创建一个新到entity
-func (this *Entity) CreatEntity(conn netWork.IConn) {
+func (this *Entity) CreatEntity(conn connect.IConn) {
 	this.EntityID = -1
 	this.Conn = conn
 	this.spaceid = -1

@@ -1,9 +1,10 @@
-package netWork
+package listener
 
 import (
 	"net"
 	"potatoengine/src/account"
 	"potatoengine/src/entity"
+	connect2 "potatoengine/src/netWork/connect"
 	"potatoengine/src/space"
 )
 
@@ -28,7 +29,7 @@ func (this *TcpListener) Listen() {
 				return
 			}
 			ac := new(account.Account)
-			connect := NewTcpConnection(c)
+			connect := connect2.NewTcpConnection(c)
 			sp := space.GetSpaceByName("GateSpace")
 			if sp == nil {
 				c.Close()

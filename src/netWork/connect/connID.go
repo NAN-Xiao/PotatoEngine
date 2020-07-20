@@ -1,4 +1,4 @@
-package netWork
+package connect
 
 type ConnID int32
 

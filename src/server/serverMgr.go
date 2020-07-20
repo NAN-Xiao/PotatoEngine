@@ -1,12 +1,10 @@
-package engine
+package server
 
-import "potatoengine/src/server"
+var servers map[E_ServerNames] *BaseServer
 
-var servers map[server.E_ServerNames] *server.BaseServer
-
-func AddServer(sr *server.BaseServer) {
+func AddServer(sr *BaseServer) {
 	if servers == nil {
-		servers = make(map[server.E_ServerNames]*server.BaseServer, 0)
+		servers = make(map[E_ServerNames]*BaseServer, 0)
 	}
 	_, ok := servers[sr.Name]
 	if ok {
@@ -15,7 +13,7 @@ func AddServer(sr *server.BaseServer) {
 	servers[sr.Name] = sr
 }
 
-func RemoveServer(sr *server.BaseServer) {
+func RemoveServer(sr *BaseServer) {
 	if servers != nil {
 		_, ok := servers[sr.Name]
 		if ok {
@@ -27,10 +25,10 @@ func RemoveServer(sr *server.BaseServer) {
 }
 
 func Start()  {
-	if servers==nil|| len(servers)<=0{
+	if servers ==nil|| len(servers)<=0{
 		println("engine not have any service")
 	}
-	for i:=range servers{
+	for i:=range servers {
 		servers[i].Run()
 	}
 }

@@ -1,4 +1,4 @@
-package netWork
+package listener
 
 type IListener interface {
 	Listen()

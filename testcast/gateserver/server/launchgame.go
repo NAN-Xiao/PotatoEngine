@@ -1,9 +1,8 @@
 package main
 
 import (
-	"potatoengine/src/engine"
 	"potatoengine/src/entity"
-	"potatoengine/src/netWork"
+	"potatoengine/src/netWork/connect"
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/server"
@@ -21,8 +20,8 @@ func main() {
 
 	//创建gateserver添加全局
 	gate := GateServer()
-	engine.AddServer(gate)
-	engine.Start()
+	server.AddServer(gate)
+	server.Start()
 	println("game server started")
 	select {}
 	println("engine out")
@@ -30,7 +29,7 @@ func main() {
 
 //创建gateserver
 func GateServer() *server.BaseServer {
-	gate := server.NewServer(server.E_Game, netWork.ETcp)
+	gate := server.NewServer(server.E_Game, connect.ETcp)
 	gatesp := new(GateSpace)
 	gatesp.BaseSpace = space.BaseSpace{
 		GameID:    0,

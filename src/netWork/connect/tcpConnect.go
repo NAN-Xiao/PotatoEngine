@@ -1,4 +1,4 @@
-package netWork
+package connect
 
 import (
 	"encoding/binary"
