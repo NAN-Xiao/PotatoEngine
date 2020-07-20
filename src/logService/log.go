@@ -16,11 +16,12 @@ func init()  {
 
 func Log(ctx string)  {
 	s:=fmt.Sprintf("%s \n",ctx)
-	errorLog<-s
+	fmt.Println(s)
 	defaultLog<-s
 }
 func LogError(ctx string)  {
 	s:=fmt.Sprintf("%s \n",ctx)
+	fmt.Println(s)
 	errorLog<-s
 }
 func Tick()  {

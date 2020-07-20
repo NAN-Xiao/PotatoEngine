@@ -11,12 +11,15 @@ import (
 type TcpListener struct {
 	netWork string
 	addr    string
-	i       IListener
+	IListener
 }
 
 func (this *TcpListener) Listen() {
 	go func() {
-		addr, err := net.ResolveTCPAddr(this.netWork, this.addr)
+		println("begin lister")
+		//addr, err := net.ResolveTCPAddr(this.netWork, this.addr)
+		addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:9000")
+
 		if err != nil {
 			println(err)
 			return

@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/descriptor"
 	pb "github.com/golang/protobuf/proto"
 	"google.golang.org/protobuf/proto"
+	"potatoengine/src/logService"
 	message "potatoengine/src/netmessage/pbmessage"
 	"reflect"
 )
@@ -67,7 +68,8 @@ func UnPackNetMessage(data []byte) (int32,interface{}) {
 	b:=data[4:]
 	m,_:=PBMessageMap[int32(id)]
 	if m==nil{
-		fmt.Printf("pbmessagemap not regist  %s  message \n",id)
+		logService.LogError(fmt.Sprintf("pbmessagemap not regist  %d  message \n",id))
+
 		return -1,nil
 	}
 	msg,ok:=m.(proto.Message)

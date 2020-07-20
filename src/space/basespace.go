@@ -27,6 +27,7 @@ func (this *BaseSpace) LeaveSpace(et entity.IEntity) {
 
 //entity加入当前地图
 func (this *BaseSpace) EnterSpace(entity entity.IEntity) {
+	println("a entity enter space")
 	if len(this.Entitys) <= 0 || this.Entitys == nil {
 		logService.LogError(fmt.Sprintf("space(id:%s) is not have entity map", this.SpaceID))
 		return

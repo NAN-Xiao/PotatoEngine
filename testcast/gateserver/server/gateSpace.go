@@ -16,13 +16,14 @@ func (this *GateSpace) GetSpace() *space.BaseSpace {
 //Ispace
 func (this *GateSpace) OnStart() {
 	println("gate space started")
+	println( this.BaseSpace.Spacename)
 }
 func (this *GateSpace) Process() {
-	for {
-		println("gate space processing")
-	}
+	//for {
+	//	println("gate space processing")
+	//}
 }
 func (this *GateSpace) Tick() {
 
-	println("gate space tick;entitys len ",len(this.Entitys))
+	//println("gate space tick;entitys len ",len(this.Entitys))
 }
