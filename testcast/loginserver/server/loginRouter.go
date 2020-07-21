@@ -33,7 +33,7 @@ func LoginHandle(writer http.ResponseWriter, request *http.Request) {
 	}
 	d := buf[4:8]
 	id := binary.BigEndian.Uint32(d)
-	fn := netmessage.GetProcessFuction(int32(id))
+	fn := netmessage.GetPBNetMessageHandl(int32(id))
 	if fn == nil {
 		return
 	}

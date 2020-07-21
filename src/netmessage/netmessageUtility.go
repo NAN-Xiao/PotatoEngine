@@ -69,7 +69,6 @@ func UnPackNetMessage(data []byte) (int32,interface{}) {
 	m,_:=PBMessageMap[int32(id)]
 	if m==nil{
 		logService.LogError(fmt.Sprintf("pbmessagemap not regist  %d  message \n",id))
-
 		return -1,nil
 	}
 	msg,ok:=m.(proto.Message)

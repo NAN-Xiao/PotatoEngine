@@ -15,6 +15,6 @@ func (this *Dispatcher) Dispatch(m *netmessage.ServerMsgPackage) {
 	if err != nil {
 		return
 	}
-	fn := netmessage.GetProcessFuction(mid)
+	fn := netmessage.GetPBNetMessageHandl(mid)
 	fn(m)
 }
