@@ -12,21 +12,21 @@ func GateHandl(conn *net.TCPConn) {
 
 }
 
-func CheckLoginToken(m interface{}) (interface{}, interface{}) {
+func CheckLoginToken(m interface{}) (interface{}, error) {
 	msg, ok := m.(message.CheckToken)
 	if ok == false {
-		return nil, &message.NetError{ErrorCode: message.EMsg_Error_CheckTokenFail}
+		return nil, nil
 	}
-	redis := db.GetRedisManager()
-	redisclient, err := redis.GetDB()
-	if err == nil {
-		serverToken := redisclient.Get(string(msg.Userid)).Val()
-		if serverToken == msg.Token {
-			response := &message.CheckTokenResult{
-				Result: true,
-			}
-			return response, nil
+	redisclient, err :=  db.GetRedisManager().GetDB()
+	if err != nil||redisclient==nil {
+		return nil,nil
+	}
+	serverToken := redisclient.Get(string(msg.Userid)).Val()
+	if serverToken == msg.Token {
+		response := &message.CheckTokenResult{
+			Result: true,
 		}
+		return response, nil
 	}
-	return nil, &message.NetError{ErrorCode: message.EMsg_Error_CheckTokenFail}
+	return nil, nil
 }

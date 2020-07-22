@@ -12,7 +12,7 @@ var PBMesssageHandleMap map[int32]func(interface{}) (interface{}, error)
 
 func init() {
 	PBMessageMap = make(map[int32]interface{})
-	PBMesssageHandleMap = make(map[int32]func(interface{}) (interface{}, interface{}))
+	PBMesssageHandleMap = make(map[int32]func(interface{}) (interface{}, error))
 }
 
 func ExcutePBMessage(msg interface{}) (interface{}, error) {
@@ -41,7 +41,7 @@ func RegistePBNetMessage(msg interface{}) {
 }
 
 // 应该还要注册消息处理函数到MesssageRouterMap
-func RegistePBNetMessageHandl(msg interface{}, f func(interface{}) (interface{}, interface{})) {
+func RegistePBNetMessageHandl(msg interface{}, f func(interface{}) (interface{}, error)) {
 	id, ok := GetServerMsgID(msg)
 	if ok != nil {
 		return

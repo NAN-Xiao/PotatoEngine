@@ -15,7 +15,7 @@ import (
 	"potatoengine/src/db"
 	message "potatoengine/src/netmessage/pbmessage"
 )
-
+//
 func LoginHandle(writer http.ResponseWriter, request *http.Request) {
 
 	fmt.Println("login space is runing")
@@ -55,12 +55,12 @@ func LoginHandle(writer http.ResponseWriter, request *http.Request) {
 }
 
 ///处理登陆
-func ProcessLoginRequest(m interface{}) (interface{}, interface{}) {
+func ProcessLoginRequest(m interface{}) (interface{}, error) {
 
 	var loginRequest, ok = m.(message.LoginResquest)
 	if ok == false {
-		var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_UserInfo}
-		return nil, errinfo
+		//var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_UserInfo}
+		return nil, fmt.Errorf("login resquest is error")
 	}
 
 	var id int32
@@ -70,8 +70,8 @@ func ProcessLoginRequest(m interface{}) (interface{}, interface{}) {
 	sql := db.GetSQLManager().GetSQL()
 	if sql == nil || sql.Ping() != nil {
 		//发送服务器错误消息
-		var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-		return nil, errinfo
+		//var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+		return nil, fmt.Errorf("login resquest is error")
 	}
 
 	myquery := fmt.Sprintf("SELECT * FROM `game`.`userinfo` WHERE `username` = '%s'AND`password`='%s'", loginRequest.Username, loginRequest.Password)
@@ -80,8 +80,8 @@ func ProcessLoginRequest(m interface{}) (interface{}, interface{}) {
 	if rows != nil {
 		rows.Scan(&id, &name, &pass)
 		if id <= 0 {
-			var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-			return nil, errinfo
+			//var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+			return nil, fmt.Errorf("login resquest is error")
 		}
 	}
 	//生成token返回token
@@ -89,25 +89,25 @@ func ProcessLoginRequest(m interface{}) (interface{}, interface{}) {
 	redis, erro := db.GetRedisManager().GetDB()
 	//检查redis
 	if erro != nil {
-		var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-		return nil, errinfo
+		//var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+		return nil, fmt.Errorf("login resquest is error")
 	}
 	//生成token
 	var token string=""
 	mkey:=fmt.Sprintf("userid_%d", id)
 	token=redis.Get(mkey).Val()
 	if token==""{
-		to,err:=CenerateToken(name, pass)
+		to,err:= CenerateToken(name, pass)
 		if err != nil {
-			var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-			return nil, errinfo
+			//var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+			return nil, fmt.Errorf("login resquest is error")
 		}
 		token=to
 	}
 	//把token写入redis
 	if err := redis.Set(mkey, token, 0).Err(); err != nil {
-		var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
-		return nil, errinfo
+		//var errinfo = &message.NetError{ErrorCode: message.EMsg_Error_DBClosed}
+		return nil, fmt.Errorf("login resquest is error")
 	}
 	loginResponse := message.LoginResponse{}
 	loginResponse.Userid = id

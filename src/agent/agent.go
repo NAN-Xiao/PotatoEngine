@@ -1,7 +1,6 @@
 package agent
 
 import (
-	"potatoengine/src/client"
 	"potatoengine/src/entity"
 )
 
@@ -11,9 +10,4 @@ type Agent struct {
 
 
 
-func NewAgent(cl *client.Client) *Agent {
-	ag := &Agent{
 
-	}
-	return ag
-}

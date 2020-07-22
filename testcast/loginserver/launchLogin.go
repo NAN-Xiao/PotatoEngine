@@ -1,7 +1,7 @@
 package main
 
 import (
-	"potatoengine/src/agent"
+	"potatoengine/src/entity"
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/server"
@@ -13,7 +13,7 @@ func RegistServerInfo()  {
 
 
 	//注册消息处理句柄
-	netmessage.RegistePBNetMessageHandl(&message.LoginResquest{},ProcessLoginRequest)
+	netmessage.RegistePBNetMessageHandl(&message.LoginResquest{}, ProcessLoginRequest)
 }
 func main() {
 	RegistServerInfo()
@@ -21,14 +21,14 @@ func main() {
 		SpacesMap: make(map[string]space.ISpace),
 		Name:   server.E_Loging,
 	}
-	sp:=LoginSpace{struct {
-		SpaceID    int32
-		Spacename  string
-		Agents     map[uint32]*agent.Agent
-		Spacechanl chan netmessage.ServerMsgPackage
-	}{SpaceID: 0, Spacename:"login" , Agents:nil , Spacechanl:nil }}
-	sp.AddEntity()
-	login.RegisterSpace(&sp)
+	sp:=new(LoginSpace)
+	sp.BaseSpace=space.BaseSpace{
+		GameID:    0,
+		SpaceID:   0,
+		Spacename: "LoginSpace",
+		Entitys:   make(map[int32] entity.IEntity,0),
+	}
+	login.RegisterSpace(sp)
 	login.Run()
 	select {}
 }

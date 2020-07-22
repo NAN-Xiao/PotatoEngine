@@ -1,12 +1,12 @@
 package main
 
 import (
+	"potatoengine/src/account"
 	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 	"potatoengine/src/space"
-	"reflect"
 )
-
+//登录验证
 type GateSpace struct {
 	space.BaseSpace
 	space.ISpace
@@ -27,11 +27,15 @@ func (this *GateSpace) Process() {
 			continue
 		}
 		for _, e := range this.Entitys {
-			if e == nil {
+			if e != nil {
 				continue
 			}
-			entity, err := e.GetEntity()
-			if err != nil {
+			ac, ok := e.(*account.Account)
+			if ok == false {
+				continue
+			}
+			entity := ac.GetEntity()
+			if &entity == nil {
 				continue
 			}
 			msg := entity.Read()
@@ -40,13 +44,15 @@ func (this *GateSpace) Process() {
 				if err != nil {
 					continue
 				}
-				if reflect.TypeOf(m) == reflect.TypeOf(message.CheckTokenResult{}) {
+				if ac.Longin == false {
 					result, ok := m.(message.CheckTokenResult)
 					if ok && result.Result == true {
-						//todo 登录成功进入游戏
+						//todo 登录成功进入游戏 从当前space移除account
+
 					}
 				}
 				entity.Write(m)
+
 			}
 		}
 	}

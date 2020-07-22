@@ -20,6 +20,13 @@ type LoginSpace struct {
 	space.BaseSpace
 	space.ISpace
 }
+
+
+func (this *LoginSpace) GetSpace() *space.BaseSpace {
+	return &this.BaseSpace
+}
+
+
 func (this *LoginSpace) OnStart() {
 
 }

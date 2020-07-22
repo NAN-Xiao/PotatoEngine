@@ -21,7 +21,11 @@ func (this *BaseServer) RegisterSpace(sp space.ISpace) {
 	if sp == nil {
 		return
 	}
-	name := sp.GetSpace().Spacename
+	spaceinfo:=sp.GetSpace()
+	if spaceinfo==nil{
+		return
+	}
+	name :=spaceinfo.Spacename
 	_, ok := this.SpacesMap[name]
 	if ok {
 		fmt.Printf("have current space::%s \n", name)

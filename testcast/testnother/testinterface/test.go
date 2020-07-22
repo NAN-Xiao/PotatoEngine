@@ -30,3 +30,29 @@ func TestIN(in Ispace){
 	fn.Call(nil)
 
 }
+
+////
+type A interface {
+	Get()
+}
+
+type B struct {
+	ID int32
+}
+
+func (this *B)Get()  {
+	
+}
+
+func TTest(a A)  {
+	b,ok:=a.(*B)
+	if ok{
+		print(b.ID)
+	}
+
+}
+
+
+
+
+

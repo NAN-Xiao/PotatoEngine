@@ -14,7 +14,11 @@ func GetEntity(conid int32) IEntity {
 	return nil
 }
 func RegistEntity(entity IEntity) {
-	id := int32(entity.GetEntity().EntityID)
+	e := entity.GetEntity()
+	if &e == nil {
+		return
+	}
+	id := int32(e.EntityID)
 	if _, ok := EntityMap[id]; ok == true {
 		return
 	}

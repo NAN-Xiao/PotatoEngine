@@ -1,43 +1,35 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/golang/protobuf/descriptor"
-	pb "github.com/golang/protobuf/proto"
-	"net"
+	"github.com/golang/protobuf/proto"
+	"io/ioutil"
+	"net/http"
+	"potatoengine/src/netmessage"
 	message "potatoengine/src/netmessage/pbmessage"
 )
 
 func main() {
-
-	var msg interface{} = &message.LoginResponse{}
-	des, ol := msg.(descriptor.Message)
-	if ol == false {
-		fmt.Errorf("msg is not a descriptor message")
+	url := "http://0.0.0.0:8999/login?a=1"
+	var rp = message.LoginResquest{
+		Username: "xiaonan",
+		Password: "123456",
 	}
-	_, md := descriptor.MessageDescriptorProto(des)
-	if pb.HasExtension(md.GetOptions(), message.E_ServerMsgID) {
-		ext, _ := pb.GetExtension(md.GetOptions(), message.E_ServerMsgID)
-		fmt.Sprint(ext)
-	}
+	data,_:= netmessage.PackageNetMessage(&rp)
 
-	fmt.Println("begin")
-	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:8999")
+	reqest, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
-		fmt.Println("addr is err")
 		return
 	}
-
-	conn, err := net.DialTCP("tcp", nil, addr)
-	if err != nil {
-		fmt.Printf("conn is err:%v\n", err)
-		return
+	defer reqest.Body.Close()
+	var cc = http.Client{}
+	if response, err := cc.Do(reqest); err == nil {
+		buf,_:=ioutil.ReadAll(response.Body)
+		fmt.Println(buf)
+		msgresponse := message.LoginResponse{}
+		proto.Unmarshal(buf[8:], &msgresponse)
+		fmt.Println("token:",msgresponse.Token)
 	}
-	go func() {
-		for {
-			conn.Write([]byte("hello"))
-		}
-	}()
-
-	select {}
+	fmt.Println("client end")
 }
