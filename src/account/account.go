@@ -6,7 +6,6 @@ import (
 
 type Account struct {
 	entity.Entity
-	entity.IEntity
 	Longin bool
 }
 

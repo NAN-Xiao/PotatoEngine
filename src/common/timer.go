@@ -1,4 +1,4 @@
-package globleTimer
+package common
 
 import "time"
 
@@ -6,7 +6,9 @@ var tick *time.Ticker
 var tickfunc []func()
 
 //初始化
+//30帧
 func init() {
+	//todo 后期从配置读取帧率
 	tick = time.NewTicker(time.Second / 10)
 	tickfunc = make([]func(), 0)
 }

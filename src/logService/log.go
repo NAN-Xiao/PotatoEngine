@@ -2,7 +2,7 @@ package logService
 
 import (
 	"fmt"
-	"potatoengine/src/globleTimer"
+	"potatoengine/src/common"
 )
 
 var errorLog chan  string
@@ -11,7 +11,7 @@ var	defaultLog chan string
 func init()  {
 	errorLog=make(chan string,1024)
 	defaultLog=make(chan string,1024)
-	globleTimer.RegiestTick(Tick)
+	common.RegiestTick(Tick)
 }
 
 func Log(ctx string)  {

@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"potatoengine/src/globleTimer"
+	"potatoengine/src/common"
 	"potatoengine/src/logService"
 	"potatoengine/src/netWork/connect"
 	"potatoengine/src/netWork/listener"
@@ -44,7 +44,7 @@ func (this *BaseServer) Stop() {
 //启动服务器
 func (this *BaseServer) Run() {
 	//todo 启动tick的携程 这里开启了新的线程来更新tick，主要目的是全局唯一的tick
-	globleTimer.Tick()
+	common.Tick()
 	//启动监听 top｜http
 	switch this.ConType {
 		case connect.ETcp:
@@ -67,7 +67,7 @@ func (this *BaseServer) SpaceRun() bool {
 		if sp == nil {
 			continue
 		}
-		globleTimer.RegiestTick(sp.Tick)
+		common.RegiestTick(sp.Tick)
 		sp.OnStart()
 		go sp.Process()
 		logService.Log(fmt.Sprintf(" space(name::%s)is run",sp.GetSpace().Spacename))

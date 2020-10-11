@@ -17,7 +17,6 @@ func RegistServerInfo() {
 }
 func main() {
 	RegistServerInfo()
-
 	//创建gateserver添加全局
 	gate := GateServer()
 	server.AddServer(gate)
