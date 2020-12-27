@@ -8,27 +8,14 @@ import (
 	"potatoengine/src/server"
 	"potatoengine/src/space"
 )
-
+var gate_server *server.BaseServer
 func RegistServerInfo() {
 	//注册msg
 	netmessage.RegistePBNetMessage(&message.CheckToken{})
 	//注册msghandle
 	netmessage.RegistePBNetMessageHandl(&message.CheckTokenResult{}, CheckLoginToken)
 }
-func main() {
-	RegistServerInfo()
-	//创建gateserver添加全局
-	gate := GateServer()
-	server.AddServer(gate)
-	server.Start()
-	println("game server started")
-	select {}
-	println("engine out")
-}
-
-//创建gateserver
-func GateServer() *server.BaseServer {
-	gate := server.NewServer(server.E_Game, connect.ETcp)
+func RegistSpace()  {
 	gatesp := new(GateSpace)
 	gatesp.BaseSpace = space.BaseSpace{
 		GameID:    0,
@@ -36,6 +23,16 @@ func GateServer() *server.BaseServer {
 		Spacename: "GateSpace",
 		Entitys:   make(map[int32]entity.IEntity),
 	}
-	gate.RegisterSpace(gatesp)
-	return gate
+	gate_server.RegisterSpace(gatesp)
+}
+
+func main() {
+	gate_server = server.NewServer(server.E_Game, connect.ETcp)
+	RegistServerInfo()
+	//创建gateserver添加全局
+	server.AddServer(gate_server)
+	server.Start()
+	println("game server started")
+	select {}
+	println("engine out")
 }
